@@ -34,6 +34,35 @@
         </el-col>
       </el-row>
     </div>
+    <!-- 加盟商数据 -->
+  <div class="joinPartnerData">
+    <div class="search_wrap">
+      <h4>加盟商数据</h4> 
+      <div class="search">
+        <el-select v-model="joinMode" placeholder="请选择加盟模式" style="width:90px">
+          <el-option label="全部" value="0"></el-option>
+          <el-option label="独家" value="1"></el-option>
+          <el-option label="非独家" value="2"></el-option>
+        </el-select>
+        
+        <el-select v-model="joinPartner" placeholder="请选择加盟商">
+          <el-option label="全部加盟商" value="0"></el-option>
+          <el-option label="加盟商1" value="1"></el-option>
+          <el-option label="加盟商2" value="2"></el-option>
+        </el-select>
+        <el-select v-model="cityId" placeholder="请选择加盟商地区"  style="width:110px">
+          <el-option label="全部地区" value="0" cityId="0"></el-option>
+          <el-option label="无为县" value="1"></el-option>
+          <el-option label="禹州市" value="2"></el-option>
+        </el-select>
+      </div>
+    </div>
+    <div style="padding:5px">
+      <p v-if="joinMode=='0'&&joinPartner=='0'&&cityId=='0'" style="text-align:center;height:60px;line-height:60px;font-size:14px;font-weight:400;">请先选择一个加盟商和加盟地区！</p>
+      <PartnerData v-else></PartnerData>
+    </div>
+      
+  </div>
     <!-- <div class="hotmap">
         <div class="mapHeader">
           <div class="mapHeader_content">
@@ -62,6 +91,18 @@
   </div>
 </template>
 <style scoped>
+  .joinPartnerData {
+    background:#ddd;
+    margin-bottom:30px;
+  }
+  .joinPartnerData .search_wrap{
+    padding:10px;
+  }
+  .joinPartnerData .search_wrap .search{
+    background:rgb(250, 235, 215);
+    padding:10px;
+    margin-top:10px;
+  }
   div.module {
     padding: 20px 15px 20px 15px;
     margin-right: 20px;
@@ -270,9 +311,13 @@ import incomingVueChart from '../../../components/highchartsIncoming.vue'
 import myCanvas from '../../../components/highChartAllData.vue'
 // import Gamp from '../../../components/map.vue'
 import { siblings } from '../../../../utils/index.js'
+import PartnerData  from '../../../components/partnerData.vue'
 export default {
   data: function () {
     return {
+      joinMode:'0',
+      joinPartner:"0",
+      cityId:'0',
       status: [
         {
           money: 99,
@@ -317,7 +362,8 @@ export default {
   components: {
     myCanvas,
     // Gamp,
-    incomingVueChart
+    incomingVueChart,
+    PartnerData
   },
   mounted() {
     $(".sign").removeClass('is-active')

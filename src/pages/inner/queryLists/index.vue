@@ -14,16 +14,12 @@
     <div>
       <el-popover
           slot="reference"
-          ref="popover1"
           placement="top-end"
-        
           width="252"
-          title="数据项说明"
-          trigger="hover">
+          title="数据项说明">
           <p>实际收益=用户实际支付金额,</p>
           <p>为本订单扣除了优惠券、赠送余额支付的金额。</p>
         </el-popover>
-        <i class="icon iconfont icon-wenhao" v-popover:popover1 style='cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle;float:right'></i>
       <el-table
         :data="lists"
         v-loading="loading2"
@@ -69,8 +65,9 @@
         <el-table-column
           min-width="80"
           label="实际收益(元)"
-          prop='userPayAmount'>
-          <!-- :render-header="rendHeader" -->
+          prop='userPayAmount'
+          :render-header="rendHeader">
+          
              <template slot-scope="scope">
             {{new Number(scope.row.userPayAmount).thousandFormat()}}
           </template>
@@ -457,40 +454,44 @@ export default {
         this.$router.push('/login')
       }
     },
-    // mouseLeaveHandler() {
-    //   $('div.el-notification').stop().animate({ right: '-330px' }, 500, function() {
-    //     this.notice = false
-    //   })
-    // },
-    // mouseEnterHandler() {
-    //   this.notice = true
-    //   $('div.el-notification').stop().animate({ right: '1px' }, 500)
-    // },
-  //   rendHeader(h, { column, $index }) {
-  //     return h('div', {
-  //       class: {
-  //         tips: true,
-  //         cell: true
-  //       },
-  //       attrs: {
-  //         style: 'background:#eee;margin-left:-20px;width:240px;'
-  //       }
-  //     }, [
-  //         h('span', '实际收益(元)'),
-  //         h('i', {
-  //           class: {
-  //             'icon iconfont icon-wenhao': true
-  //           },
-  //           attrs: {
-  //             style: 'cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle'
-  //           },
-  //           on: {
-  //             mouseenter: this.mouseEnterHandler,
-  //             mouseleave: this.mouseLeaveHandler
-  //           }
-  //         })
-  //       ])
-  //   }
+   mouseLeaveHandler() {
+       $('div.el-popover').css({
+         "display":"none",
+       })
+    },
+    mouseEnterHandler() {
+      $('div.el-popover').css({
+         right:21,
+         top:0,
+         "display":"block",
+       })
+    },
+    rendHeader(h, { column, $index }) {
+      return h('div', {
+        class: {
+          tips: true,
+          cell: true
+        },
+        attrs: {
+          style: 'background:#eee;margin-left:-20px;width:240px;',
+          
+        }
+      }, [
+          h('span', '实际收益(元)'),
+          h('i', {
+            class: {
+              'icon iconfont icon-wenhao': true
+            },
+            attrs: {
+              style: 'cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle',
+            },
+            on: {
+              mouseenter: this.mouseEnterHandler,
+              mouseleave: this.mouseLeaveHandler
+            }
+          })
+        ])
+    }
   },
   mounted () {
     document.title = '报表管理-收益排行'

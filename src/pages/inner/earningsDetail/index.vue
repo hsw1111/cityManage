@@ -51,15 +51,13 @@
 		<div id="earD_body">
          <el-popover
           slot="reference"
-          ref="popover1"
           placement="top-end"
           width="252"
-          title="数据项说明"
-          trigger="hover">
+          title="数据项说明">
           <p>实际收益=用户实际支付金额,</p>
           <p>为本订单扣除了优惠券、赠送余额支付的金额。</p>
         </el-popover>
-        <i class="icon iconfont icon-wenhao" v-popover:popover1 style='cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle;float:right'></i>
+        <!-- <i class="icon iconfont icon-wenhao" v-popover:popover1 style='cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle;float:right'></i> -->
         <el-table
         :data="tableData"    
         v-loading="loading2"
@@ -132,9 +130,14 @@
             {{(scope.row.grantAmount).thousandFormat()}}
           </template>
         </el-table-column>
+        <!-- <el-table-column
+          prop="balanceAmount"
+          label="实际收益(元)"
+        > -->
         <el-table-column
           prop="balanceAmount"
           label="实际收益(元)"
+          :render-header="rendHeader"
         >
         <!-- :render-header="rendHeader" -->
           <template slot-scope="scope">
@@ -154,15 +157,6 @@
         id="pageInput">
       </el-pagination>
 		</div>
-    <el-popover
-      class="popover1"
-      ref="popover1"
-      placement="top-start"
-      title="标题"
-      width="200"
-      trigger="hover"
-      content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-    </el-popover>
 	</div>
 </template>
 
@@ -755,40 +749,44 @@ export default {
         this.$router.push('/login')
       }
     },
-    // mouseLeaveHandler() {
-    //   $('div.el-notification').stop().animate({ right: '-330px' }, 500, function() {
-    //     this.notice = false
-    //   })
-    // },
-    // mouseEnterHandler() {
-    //   this.notice = true
-    //   $('div.el-notification').stop().animate({ right: '1px' }, 500)
-    // },
-    // rendHeader(h, { column, $index }) {
-    //   return h('div', {
-    //     class: {
-    //       tips: true,
-    //       cell: true
-    //     },
-    //     attrs: {
-    //       style: 'background:#eee;margin-left:-20px;width:240px;'
-    //     }
-    //   }, [
-    //       h('span', '实际收益(元)'),
-    //       h('i', {
-    //         class: {
-    //           'icon iconfont icon-wenhao': true
-    //         },
-    //         attrs: {
-    //           style: 'cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle',
-    //         },
-    //         on: {
-    //           mouseenter: this.mouseEnterHandler,
-    //           mouseleave: this.mouseLeaveHandler
-    //         }
-    //       })
-    //     ])
-    // }
+    mouseLeaveHandler() {
+       $('div.el-popover').css({
+         "display":"none",
+       })
+    },
+    mouseEnterHandler() {
+      $('div.el-popover').css({
+         right:41,
+         top:145,
+         "display":"block",
+       })
+    },
+    rendHeader(h, { column, $index }) {
+      return h('div', {
+        class: {
+          tips: true,
+          cell: true
+        },
+        attrs: {
+          style: 'background:#eee;margin-left:-20px;width:240px;',
+          
+        }
+      }, [
+          h('span', '实际收益(元)'),
+          h('i', {
+            class: {
+              'icon iconfont icon-wenhao': true
+            },
+            attrs: {
+              style: 'cursor:pointer;margin-left:0px;color:orange;font-size:18px;vertical-align:middle',
+            },
+            on: {
+              mouseenter: this.mouseEnterHandler,
+              mouseleave: this.mouseLeaveHandler
+            }
+          })
+        ])
+    }
   }
 }
 </script>

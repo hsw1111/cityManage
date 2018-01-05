@@ -5,7 +5,8 @@
         <img src="../assets/img/2.png" style="margin-top:100px"/>
         <p>暂无数据</p>
       </div>
-      <div v-loading="loading" id="container2" style="height:500px" v-show="!noData"></div>
+      <div v-loading="loading" id="container2" style="height:400px" v-show="!noData"></div>
+      <!-- <div v-loading="loading" id="container2"  v-show="!noData"></div> -->
   </div>
 </template>
 <script>
@@ -170,8 +171,12 @@
               } 
 
               if (num != 0) {
-                this.chartData = newChartData
-                this.cityList = newCity
+                // this.chartData = newChartData
+                // this.cityList = newCity
+  // ------------取前五个数
+                this.chartData = newChartData.slice(0,5)
+                this.cityList = newCity.slice(0,5)
+
                 this.initChart()
                 this.noData = false
               }else{

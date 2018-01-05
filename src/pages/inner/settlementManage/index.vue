@@ -2,11 +2,29 @@
   <div class="settlementManager">
         <div class="settlementManager_head1">
             <el-row class="selectPlace">
-                <div class="citys" style="margin-left: 80px;color:#555">
-                <address class="joinArea" style="margin-left: -57px;">加盟区域</address>
-                <span @click="handleClick" myId='0' class="active">全部地区</span>
-                <span @click="handleClick" :key='item.id' :myId='item.code' v-for="item in cityList">{{item.name}}</span>
-                </div>
+                <p style="margin-left:17px;margin-bottom:15px;color:rgb(85, 85, 85)">
+                  <el-select v-model="joinMode" placeholder="请选择加盟模式" style="width:90px">
+                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="独家" value="1"></el-option>
+                    <el-option label="非独家" value="2"></el-option>
+                  </el-select>
+                  
+                  <el-select v-model="joinPartner" placeholder="请选择加盟商">
+                    <el-option label="全部加盟商" value="0"></el-option>
+                    <el-option label="加盟商1" value="1"></el-option>
+                    <el-option label="加盟商2" value="2"></el-option>
+                  </el-select>
+                  <el-select v-model="cityId" placeholder="请选择加盟商地区"  style="width:110px">
+                    <el-option label="全部地区" value="0" cityId="0"></el-option>
+                    <el-option label="无为县" value="1"></el-option>
+                    <el-option label="禹州市" value="2"></el-option>
+                  </el-select>
+                </p>
+                <!-- <div class="citys" style="margin-left: 80px;color:#555">
+                  <address class="joinArea" style="margin-left: -57px;">加盟区域</address>
+                  <span @click="handleClick" myId='0' class="active">全部地区</span>
+                  <span @click="handleClick" :key='item.id' :myId='item.code' v-for="item in cityList">{{item.name}}</span>
+                </div> -->
             </el-row>
         </div>
         <div class="settlementManager_head2">
@@ -133,6 +151,11 @@ import { host } from '../../../config/index.js'
 export default {
   data: function () {
     return {
+      //查询条件
+      joinMode:'0',
+      cityId:'0',
+      joinPartner:'0',
+// --------------------------------
       companyName:"",
       tableData: [],
       tableData2: [],

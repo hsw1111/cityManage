@@ -1,33 +1,69 @@
 <template>
   <div class="consumeData">
-    <div class="countInfo">
-       <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
-          <span class="joinPlace">加盟区域</span>
-           <city-list v-bind:joinCity="remoteCityList" v-on:listenToChildEvetn="showMsgFormChild"></city-list>
-        </div> -->
-      <el-row class="countTitle">
-        <!-- <span class="countDimension labelAlign" style="margin-right: 0px;">统计维度</span> -->
-        <div class="timeSelectBtn" style='margin-left: -10px;'>
-          <el-button class="active" @click="handleChangeType" myId='daily'>今日</el-button>
-          <el-button @click="handleChangeType" myId='weekly'>本周</el-button>
-          <el-button @click="handleChangeType" myId='monthly'>本月</el-button>
-          <el-button @click="handleChangeType" myId='all'>所有日期</el-button>
-          <el-button @click='handleChangeType' myId='define' style="margin-right: 15px;">指定时间段</el-button>
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleClickTab">
+      <el-tab-pane name="partner">
+        <span slot="label">按加盟商</span>
+        <div class="countInfo">
+          <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
+              <span class="joinPlace">加盟区域</span>
+              <city-list v-bind:joinCity="remoteCityList" v-on:listenToChildEvetn="showMsgFormChild"></city-list>
+            </div> -->
+          <el-row class="countTitle">
+            <!-- <span class="countDimension labelAlign" style="margin-right: 0px;">统计维度</span> -->
+            <div class="timeSelectBtn" style='margin-left: -10px;'>
+              <el-button class="active" @click="handleChangeType" myId='daily'>今日</el-button>
+              <el-button @click="handleChangeType" myId='weekly'>本周</el-button>
+              <el-button @click="handleChangeType" myId='monthly'>本月</el-button>
+              <el-button @click="handleChangeType" myId='all'>所有日期</el-button>
+              <el-button @click='handleChangeType' myId='define' style="margin-right: 15px;">指定时间段</el-button>
+            </div>
+            <el-date-picker 
+              v-model="value4" 
+              type="daterange" 
+              v-show="show" 
+              placeholder="选择时间范围"  
+              style="vertical-align: top; margin-top: 0px;"
+              align="right">
+            </el-date-picker>
+            <button style="border-radius: 4px; font-size: 14px; cursor: pointer;" v-show="show" class="incomingRank_my_btn" @click="getDateByTimeLine">查询</button>
+          </el-row>
         </div>
-        <el-date-picker 
-          v-model="value4" 
-          type="daterange" 
-          v-show="show" 
-          placeholder="选择时间范围"  
-          style="vertical-align: top; margin-top: 0px;"
-          align="right">
-        </el-date-picker>
-        <button style="border-radius: 4px; font-size: 14px; cursor: pointer;" v-show="show" class="incomingRank_my_btn" @click="getDateByTimeLine">查询</button>
-      </el-row>
-    </div>
-    <el-row class="countDetail">
-      <router-view></router-view>
-    </el-row>
+        <el-row class="countDetail">
+          <router-view></router-view>
+        </el-row>
+      </el-tab-pane>
+      <el-tab-pane name="city">
+        <span slot="label">按地区</span>
+        <div class="countInfo">
+          <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
+              <span class="joinPlace">加盟区域</span>
+              <city-list v-bind:joinCity="remoteCityList" v-on:listenToChildEvetn="showMsgFormChild"></city-list>
+            </div> -->
+          <el-row class="countTitle">
+            <!-- <span class="countDimension labelAlign" style="margin-right: 0px;">统计维度</span> -->
+            <div class="timeSelectBtn" style='margin-left: -10px;'>
+              <el-button class="active" @click="handleChangeType" myId='daily'>今日</el-button>
+              <el-button @click="handleChangeType" myId='weekly'>本周</el-button>
+              <el-button @click="handleChangeType" myId='monthly'>本月</el-button>
+              <el-button @click="handleChangeType" myId='all'>所有日期</el-button>
+              <el-button @click='handleChangeType' myId='define' style="margin-right: 15px;">指定时间段</el-button>
+            </div>
+            <el-date-picker 
+              v-model="value4" 
+              type="daterange" 
+              v-show="show" 
+              placeholder="选择时间范围"  
+              style="vertical-align: top; margin-top: 0px;"
+              align="right">
+            </el-date-picker>
+            <button style="border-radius: 4px; font-size: 14px; cursor: pointer;" v-show="show" class="incomingRank_my_btn" @click="getDateByTimeLine">查询</button>
+          </el-row>
+        </div>
+        <el-row class="countDetail">
+          <router-view></router-view>
+        </el-row>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
@@ -41,6 +77,7 @@ import {mapActions,mapGetters} from 'vuex'
 export default {
   data: function () {
     return {
+      activeName:'partner',
       remoteCityList:[],
        cityCodeList: [],
       form: {
@@ -115,13 +152,16 @@ export default {
       // 子组件像父组件传值,目的是获取被选中的cityCode
       this.cityCodeList = data;
     },
+    handleClickTab(){
+        this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
+    },
     handleChangeType(e) {
       switch (e.target.innerText) {
         case '今日': {
           this.form.type = 'date'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'daily' } })
+          this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
           this.form.formatType = 'yyyy-MM-dd'
           break
         }
@@ -129,7 +169,7 @@ export default {
           this.form.type = 'week'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'weekly' } })
+          this.$router.push({ query: { type: 'weekly',activeName:this.activeName } })
           this.form.formatType = 'yyyy 第 WW 周'
           break
         }
@@ -137,20 +177,20 @@ export default {
           this.form.type = 'month'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'monthly'} })
+          this.$router.push({ query: { type: 'monthly',activeName:this.activeName} })
           this.form.formatType = ''
           break
         }
         case '所有日期': {
           this.show = false
-          this.$router.push({ query: { type: 'all' } })
+          this.$router.push({ query: { type: 'all',activeName:this.activeName } })
           this.$store.state.users.timeline = {}
           this.value4 = []
           this.form.formatType = ''
           break
         }
         case '指定时间段': {
-          this.$router.push({ query: { type: 'define' } })
+          this.$router.push({ query: { type: 'define',activeName:this.activeName } })
           this.show = true
           this.form.formatType = ''
           break
@@ -188,7 +228,7 @@ export default {
     }
   },
   mounted () {
-    this.$router.push('/index/incomingRank?type=daily')
+    this.$router.push('/index/incomingRank?type=daily&activeName=partner')
     $(".sign").removeClass('is-active')
     $('.sign[name="51"]').addClass('is-active')
     document.title = '报表管理-收益排行'

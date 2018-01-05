@@ -22,7 +22,7 @@
                         <input v-model="terminalNumber"  class="carMan_bar" placeholder="车辆号\终端编号">
                       </el-form-item>
                       <el-form-item class="filtercar" style="width: 400px;color:#555">
-                        <span class="labelAlign">运营状态</span>
+                        <span class="labelAlign">车辆状态</span>
                         <el-checkbox-group v-model="checkList">
                             <el-checkbox label="4" style="color:#555">待出租</el-checkbox>
                             <el-checkbox label="5" style="color:#555">已预订</el-checkbox>
@@ -80,7 +80,7 @@
                   </el-table-column>
                   <el-table-column
                     prop="stateName"
-                    label="运营状态">
+                    label="车辆状态">
                   </el-table-column>
                 </el-table>
 
@@ -111,7 +111,7 @@
                         <input v-model="terminalNumber"  class="carMan_bar" placeholder="车辆号\终端编号">
                       </el-form-item>
                       <el-form-item class="filtercar" style="width: 400px;">
-                        <span class="labelAlign">运营状态</span>
+                        <span class="labelAlign">车辆状态</span>
                         <el-checkbox-group v-model="checkList">
                             <el-checkbox label="4">待出租</el-checkbox>
                             <el-checkbox label="5">已预订</el-checkbox>
@@ -169,7 +169,7 @@
                 </el-table-column>
                 <el-table-column
                   prop="stateName"
-                  label="状态">
+                  label="车辆状态">
                 </el-table-column>
               </el-table>
               <el-pagination
