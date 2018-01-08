@@ -90,12 +90,42 @@
       <el-tab-pane label="加盟商" name="加盟商" id="partner">
         <div id="search_content">
           <el-row class="selectPlace">
-            <div class="citys" style="margin-left:65px;color:#555">
+            <!-- 新增按加盟商查询 -->
+              <p class="select_connect">
+                <el-select v-model="joinMode"  @change="modeChange">
+                  <el-option label="全部" value="0"></el-option>
+                  <el-option label="独家" value="1"></el-option>
+                  <el-option label="非独家" value="2"></el-option>
+                </el-select>
+                <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+                  <el-option label="全部加盟商" value="0"></el-option>
+                  <!-- <el-option label="加盟商1" value="1"></el-option>
+                  <el-option label="加盟商2" value="2"></el-option> -->
+                  <el-option 
+                    v-for='(item,index) in partnerLists'
+                    :key="item.id"
+                    :label='item.joinTarget=="1"?item.companyName:item.conName'
+                    :value='item.cityPartnerId'
+                    :index='index'
+                  ></el-option>
+                </el-select>
+                <el-select v-model="cityId" placeholder="请选择加盟商地区">
+                  <el-option label="全部地区" value="0" v-if='joinPartner=="0"'></el-option>
+                  <el-option 
+                    v-else
+                    v-for='(item,index) in citys'
+                    :key="index"
+                    :label='item.cityName'
+                    :value='item.cityId'
+                  ></el-option>
+                </el-select>
+              </p>
+            <!-- <div class="citys" style="margin-left:65px;color:#555">
               <address class="joinArea" style="margin-right:10px;margin-left:-65px">加盟区域</address>
-              <span @click="handleClick" name="0" class="active">全部地区</span>
+              <span @click="handleClick" name="0" class="active">全部地区</span> -->
               <!-- <span @click="handleClick" :name="list.cityId" :key="list.cityId" v-for="list of cityList">{{list.cityName}}</span> -->
-              <span @click="handleClick" :name="list.code" :key="list.id" v-for="list of cityList">{{list.name}}</span>
-            </div>
+              <!-- <span @click="handleClick" :name="list.code" :key="list.id" v-for="list of cityList">{{list.name}}</span>
+            </div> -->
           </el-row>
           <div class="am_search">
             <label>
@@ -224,6 +254,10 @@ import { delAdminUser } from '../../../api/delAdminUser.api'
 import { delAccountByAdmin } from '../../../api/delAccountByAdmin.api'
 import { host } from '../../../config/index.js'
 export default {
+  created(){
+    this.searchPartner1()
+    this.searchPartner2()
+  },
   data() {
     var that = this
     var validatorUserName = function(rule, value, callback) {
@@ -287,6 +321,15 @@ export default {
       }
     }
     return {
+       //查询条件
+      joinMode:'0',
+      joinPartner:'0',
+      cityId:'0',
+      partnerLists:[],
+      temp1:[],
+      temp2:[],
+      citys:[],
+// --------------------------------
       radio2:'',
       cityList: [],
       cityId: '0',
@@ -355,6 +398,87 @@ export default {
     }
   },
   methods: {
+     // ----------------------------------下拉菜单三联动部分
+
+    searchPartner1(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:1
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp1 = data
+            
+
+          }
+        })
+    },
+    searchPartner2(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:2
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp2 = data
+            
+
+          }
+        })
+    },
+    // 加盟模式改变
+    modeChange(val){
+      if(val=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }else if(val=='1'){
+         this.partnerLists = this.temp1
+      }else{
+        this.partnerLists = this.temp2
+      }
+      this.joinPartner = '0'
+      this.cityId = '0'
+      console.log(this.partnerLists)
+      
+    },
+  // 加盟商改变
+  partnerChange(val){
+    console.log(val)
+    var data = this.partnerLists.filter(item=>{
+      return item.cityPartnerId == val
+    })
+   
+    if(val=='0'){
+      this.citys = []
+      this.cityId = '0'
+    }else{
+      this.citys = data[0].areaList
+      this.cityId = this.citys[0].cityId
+    }
+    console.log(this.cityId)
+  },
     ha(scope){
       console.log(scope)
     },

@@ -39,23 +39,35 @@
     <div class="search_wrap">
       <h4>加盟商数据</h4> 
       <div class="search">
-        <el-select v-model="joinMode" placeholder="请选择加盟模式" style="width:90px">
-          <el-option label="全部" value="0"></el-option>
-          <el-option label="独家" value="321181"></el-option>
-          <el-option label="非独家" value="2"></el-option>
-        </el-select>
-        
-        <el-select v-model="joinPartner" placeholder="请选择加盟商">
-          <el-option label="全部加盟商" value="0"></el-option>
-          <el-option label="加盟商1" value="1"></el-option>
-          <el-option label="加盟商2" value="2"></el-option>
-        </el-select>
-        <el-select v-model="cityId" placeholder="请选择加盟商地区"  style="width:110px">
-          <el-option label="全部地区" value="0" cityId="0"></el-option>
-          <el-option label="无为县" value="1"></el-option>
-          <el-option label="禹州市" value="2"></el-option>
-          <el-option label="马鞍山市" value="340500"></el-option>
-        </el-select>
+        <p class="select_connect">
+          <el-select v-model="joinMode"  @change="modeChange">
+            <el-option label="全部" value="0"></el-option>
+            <el-option label="独家" value="1"></el-option>
+            <el-option label="非独家" value="2"></el-option>
+          </el-select>
+          <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+            <el-option label="全部加盟商" value="0"></el-option>
+            <!-- <el-option label="加盟商1" value="1"></el-option>
+            <el-option label="加盟商2" value="2"></el-option> -->
+            <el-option 
+              v-for='(item,index) in partnerLists'
+              :key="item.id"
+              :label='item.joinTarget=="1"?item.companyName:item.conName'
+              :value='item.cityPartnerId'
+              :index='index'
+            ></el-option>
+          </el-select>
+          <el-select v-model="cityId" placeholder="请选择加盟商地区">
+            <el-option label="全部地区" value="0" v-if='joinPartner=="0"'></el-option>
+            <el-option 
+              v-else
+              v-for='(item,index) in citys'
+              :key="index"
+              :label='item.cityName'
+              :value='item.cityId'
+            ></el-option>
+          </el-select>
+        </p>
       </div>
     </div>
     <div style="padding:5px">

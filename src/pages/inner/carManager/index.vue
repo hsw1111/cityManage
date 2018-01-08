@@ -231,6 +231,8 @@ export default {
       joinPartner:'0',
       cityId:'0',
       partnerLists:[],
+      temp1:[],
+      temp2:[],
       citys:[],
       form: {
         radio: '',
@@ -253,17 +255,26 @@ export default {
       isSearch: false
     }
   },
+  created(){
+    this.searchPartner1()
+    this.searchPartner2()
+  },
   mounted: function () {
     $(".sign").removeClass('is-active')
     $('.sign[name=30]').addClass('is-active')
-    document.title = '车辆管理'
-    this.getCityList()
+     document.title = '车辆管理'
+
+    
+   
+    // this.getCityList()
     this.getDateByTabName('0')
   },
   methods: {
   
 // ----------------------------------下拉菜单三联动部分
-    searchPartner(){
+
+    searchPartner1(){
+      this.loading2 = true
       request
         .post(host + 'beepartner/admin/cityPartner/findCityPartner')
         .withCredentials()
@@ -271,7 +282,7 @@ export default {
           'content-type': 'application/x-www-form-urlencoded'
         })
         .send({
-          joinMode:this.joinMode
+          joinMode:1
         })
         .end((error, res) => {
           if (error) {
@@ -281,21 +292,49 @@ export default {
             this.checkLogin(res)
             console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
-              this.partnerLists = data
-            
+              this.temp1 = data
+              this.loading2 = false
+          }
+        })
+    },
+    searchPartner2(){
+       this.loading2 = true
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:2
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp2 = data
+               this.loading2 = false
 
           }
         })
     },
     // 加盟模式改变
     modeChange(val){
-      this.searchPartner()
       if(val=='0'){
         this.partnerLists = []
         this.citys = []
+      }else if(val=='1'){
+         this.partnerLists = this.temp1
+      }else{
+        this.partnerLists = this.temp2
       }
       this.joinPartner = '0'
       this.cityId = '0'
+      console.log(this.partnerLists)
       
     },
   // 加盟商改变
@@ -339,7 +378,10 @@ export default {
         })
         .send({
           'type': this.activeName === '已分配'?0:1,
-          'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+          // 'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+          'cityCode': this.activeName === '已分配'?this.cityId:'',
+          'joinMode':this.joinMode,
+          'cityPartnerId':this.joinPartner,
           'currentPage': val,
           'bikeState': radio,
           'startOnlineTime': startTime,
@@ -569,6 +611,8 @@ export default {
           'keyName': this.terminalNumber,
           // 'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
           'cityCode': this.activeName === '已分配'?this.cityId:'',
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode,
           'type': type
         })
         .end((error, res) => {
@@ -662,6 +706,15 @@ export default {
       this.form.data1 = ''
       this.form.data2 = ''
       this.checkList = []
+
+      //切换tab栏清空数据
+      this.joinMode = '0'
+      this.joinPartner = '0'
+      this.cityId = '0'
+      this.partnerLists = []
+      this.citys = []
+
+
       if (this.activeName === '未分配') {
         this.getDateByTabName('1')
 
@@ -688,13 +741,14 @@ export default {
           'endOnlineTime': this.form.data2 === ''?'':moment(this.form.data2).format('YYYY-MM-DD'),
           'bikeState': radio,
           'keyName': this.terminalNumber,
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode
         })
         .end((error, res) => {
           if (error) {
             this.loading2 = false
             console.log('error:', error)
           } else {
-            this.loading2 = false
             this.checkLogin(res)
             var data = (JSON.parse(res.text)).data
             var totalPage = Number(JSON.parse(res.text).totalPage)
@@ -706,6 +760,7 @@ export default {
               this.pageShow = false
             }            
             this.tableData = newData
+            this.loading2 = false
           }
         })
     },
@@ -810,7 +865,7 @@ export default {
   watch: {
     'joinMode':'searchByTimeline',
     'cityId':'searchByTimeline',
-    'joinPartner':'searchByTimeline',
+    // 'joinPartner':'searchByTimeline',
     'checkList': 'searchThroughCheckList',
     "form.data1": {
       handler: function (val, oldVal) {

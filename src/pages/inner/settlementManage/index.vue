@@ -2,24 +2,36 @@
   <div class="settlementManager">
         <div class="settlementManager_head1">
             <el-row class="selectPlace">
-                <p class="select_connect">
-                  <el-select v-model="joinMode" placeholder="请选择加盟模式">
-                    <el-option label="全部" value="0"></el-option>
-                    <el-option label="独家" value="1"></el-option>
-                    <el-option label="非独家" value="2"></el-option>
-                  </el-select>
-                  
-                  <el-select v-model="joinPartner" placeholder="请选择加盟商">
-                    <el-option label="全部加盟商" value="0"></el-option>
-                    <el-option label="加盟商1" value="1"></el-option>
-                    <el-option label="加盟商2" value="2"></el-option>
-                  </el-select>
-                  <el-select v-model="cityId" placeholder="请选择加盟商地区">
-                    <el-option label="全部地区" value="0" cityId="0"></el-option>
-                    <el-option label="无为县" value="1"></el-option>
-                    <el-option label="禹州市" value="2"></el-option>
-                  </el-select>
-                </p>
+<!-- 新增按加盟商查询 -->
+              <p class="select_connect">
+                <el-select v-model="joinMode"  @change="modeChange">
+                  <el-option label="全部" value="0"></el-option>
+                  <el-option label="独家" value="1"></el-option>
+                  <el-option label="非独家" value="2"></el-option>
+                </el-select>
+                <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+                  <el-option label="全部加盟商" value="0"></el-option>
+                  <!-- <el-option label="加盟商1" value="1"></el-option>
+                  <el-option label="加盟商2" value="2"></el-option> -->
+                  <el-option 
+                    v-for='(item,index) in partnerLists'
+                    :key="item.id"
+                    :label='item.joinTarget=="1"?item.companyName:item.conName'
+                    :value='item.cityPartnerId'
+                    :index='index'
+                  ></el-option>
+                </el-select>
+                <el-select v-model="cityId" placeholder="请选择加盟商地区">
+                  <el-option label="全部地区" value="0" v-if='joinPartner=="0"'></el-option>
+                  <el-option 
+                    v-else
+                    v-for='(item,index) in citys'
+                    :key="index"
+                    :label='item.cityName'
+                    :value='item.cityId'
+                  ></el-option>
+                </el-select>
+              </p>
                 <!-- <div class="citys" style="margin-left: 80px;color:#555">
                   <address class="joinArea" style="margin-left: -57px;">加盟区域</address>
                   <span @click="handleClick" myId='0' class="active">全部地区</span>
@@ -153,8 +165,12 @@ export default {
     return {
       //查询条件
       joinMode:'0',
-      cityId:'0',
       joinPartner:'0',
+      cityId:'0',
+      partnerLists:[],
+      temp1:[],
+      temp2:[],
+      citys:[],
 // --------------------------------
       companyName:"",
       tableData: [],
@@ -189,8 +205,92 @@ export default {
     $('.sign[name="60"]').addClass('is-active')
     this.getCityList()
     this.getDateByTabName('2')
+     this.searchPartner1()
+    this.searchPartner2()
   },
   methods: {
+     // ----------------------------------下拉菜单三联动部分
+
+    searchPartner1(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:1
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp1 = data
+            
+
+          }
+        })
+    },
+    searchPartner2(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:2
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp2 = data
+            
+
+          }
+        })
+    },
+    // 加盟模式改变
+    modeChange(val){
+      if(val=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }else if(val=='1'){
+         this.partnerLists = this.temp1
+      }else{
+        this.partnerLists = this.temp2
+      }
+      this.joinPartner = '0'
+      this.cityId = '0'
+      console.log(this.partnerLists)
+      
+    },
+  // 加盟商改变
+  partnerChange(val){
+    console.log(val)
+    var data = this.partnerLists.filter(item=>{
+      return item.cityPartnerId == val
+    })
+   
+    if(val=='0'){
+      this.citys = []
+      this.cityId = '0'
+    }else{
+      this.citys = data[0].areaList
+      this.cityId = this.citys[0].cityId
+    }
+    console.log(this.cityId)
+  },
+
     handleCurrentChange(val) {
      
      this.currentPage = val
@@ -203,7 +303,11 @@ export default {
         })
         .send({
           'status': this.currentStatus,
-          'cityId': this.activeName === '待结算'?$('.citys span.active').attr('myId'):$('.citys2 span.active').attr('myId'),
+          // 'cityId': this.activeName === '待结算'?$('.citys span.active').attr('myId'):$('.citys2 span.active').attr('myId'),
+          'cityId':this.cityId,
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode,
+
           'currentPage': val
         })
         .end((error, res) => {
@@ -231,12 +335,13 @@ export default {
     },
     handleClick(e) {
       this.loading2 = true
-      this.currentPage = 1
-      var elems = siblings(e.target)
-      for (var i = 0; i < elems.length; i++) {
-        elems[i].setAttribute('class', '')
-      }
-      e.target.setAttribute('class', 'active')
+
+      // this.currentPage = 1
+      // var elems = siblings(e.target)
+      // for (var i = 0; i < elems.length; i++) {
+      //   elems[i].setAttribute('class', '')
+      // }
+      // e.target.setAttribute('class', 'active')
       request
         .post(host + 'beepartner/admin/withDraw/findWithDraw')
         .withCredentials()
@@ -244,8 +349,11 @@ export default {
           'content-type': 'application/x-www-form-urlencoded'
         })
         .send({
-          'status': $('.citys span.active')[1].getAttribute('myStatus'),
-          'cityId': $('.citys span.active').attr('myId')
+          'status': $('.citys span.active')[0].getAttribute('myStatus'),
+          // 'cityId': $('.citys span.active').attr('myId'),
+          'cityId':this.cityId,
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode,
         })
         .end((error, res) => {
           if (error) {
@@ -309,7 +417,11 @@ export default {
           'content-type': 'application/x-www-form-urlencoded'
         })
         .send({
-          'cityId': $('.citys span.active').attr('myId'),
+          // 'cityId': $('.citys span.active').attr('myId'),
+          'cityId':this.cityId,
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode,
+
           'status': status
         })
         .end((error, res) => {
@@ -431,8 +543,12 @@ export default {
           'content-type': 'application/x-www-form-urlencoded'
         })
         .send({
-          'status': $('.citys span.active')[1].getAttribute('myStatus'),
-          'cityId': $('.citys span.active').attr('myId'),
+          'status': $('.citys span.active')[0].getAttribute('myStatus'),
+          // 'cityId': $('.citys span.active').attr('myId'),
+          'cityId':this.cityId,
+          'cityPartnerId':this.joinPartner,
+          'joinMode':this.joinMode,
+
           'currentPage':this.currentPage
           
         })
@@ -476,6 +592,10 @@ export default {
         this.$router.push('/login')
       }
     }
+  },
+  watch:{
+    // 'joinMode':'handleClick',
+    'cityId':'handleClick'
   }
 }
 </script>
