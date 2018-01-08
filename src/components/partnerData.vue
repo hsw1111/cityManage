@@ -375,12 +375,13 @@ i.wait {
 </style>
 <script>
 import cityList from "./cityList.vue";
-import myCanvas from "./highChartRectIndex.vue";
+import myCanvas from "./highChartRectIndex1.vue";
 // import Gamp from '../../../components/map.vue'
 import request from "superagent";
 import { host } from "../config/index";
 // import $ from "jquery";
 export default {
+  props:['cityCode'],
   data: function() {
     return {
       remoteCityList: [],
@@ -455,7 +456,7 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId:321181
+          cityId: this.cityCode
         })
         .end((err, res) => {
           if (err) {
@@ -488,7 +489,7 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId:321181
+          cityId: this.cityCode
         })
         .end((err, res) => {
           if (err) {
@@ -516,7 +517,7 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId:321181
+          cityId: this.cityCode
         })
         .end((err, res) => {
           if (err) {
@@ -566,7 +567,7 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId:321181
+          cityId: this.cityCode
         })
         .end((err, res) => {
           if (err) {
@@ -584,27 +585,6 @@ export default {
           }
         });
     },
-    // checkoutSeesion() {
-    //   request
-    //     .post(host + "beepartner/franchisee/Own/findFranchiseeUserOwn")
-    //     .withCredentials()
-    //     .set({
-    //       "content-type": "application/x-www-form-urlencoded"
-    //     })
-    //     .send()
-    //     .end((err, res) => {
-    //       if (err) {
-    //         console.log("err2:" + err);
-    //       } else {
-    //         var message = JSON.parse(res.text).message;
-    //         if (message === "用户登录超时") {
-    //           this.$router.push("/login");
-    //         } else {
-    //           return;
-    //         }
-    //       }
-    //     });
-    // },
     mouseLeaveHandler() {
       
       $('div.el-notification').stop().animate({ right: '-330px' }, 500,function(){
@@ -622,7 +602,6 @@ export default {
   mounted: function() {
     $(".sign").removeClass("is-active");
     $('.sign[name="1100"]').addClass("is-active");
-    // this.checkoutSeesion();
     this.loadIndexData()
     document.title = "蜜蜂出行加盟商管理平台";
   },

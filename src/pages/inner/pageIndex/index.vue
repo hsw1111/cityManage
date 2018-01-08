@@ -41,7 +41,7 @@
       <div class="search">
         <el-select v-model="joinMode" placeholder="请选择加盟模式" style="width:90px">
           <el-option label="全部" value="0"></el-option>
-          <el-option label="独家" value="1"></el-option>
+          <el-option label="独家" value="321181"></el-option>
           <el-option label="非独家" value="2"></el-option>
         </el-select>
         
@@ -54,12 +54,16 @@
           <el-option label="全部地区" value="0" cityId="0"></el-option>
           <el-option label="无为县" value="1"></el-option>
           <el-option label="禹州市" value="2"></el-option>
+          <el-option label="马鞍山市" value="340500"></el-option>
         </el-select>
       </div>
     </div>
     <div style="padding:5px">
       <p v-if="joinMode=='0'&&joinPartner=='0'&&cityId=='0'" style="text-align:center;height:60px;line-height:60px;font-size:14px;font-weight:400;">请先选择一个加盟商和加盟地区！</p>
-      <PartnerData v-else></PartnerData>
+   
+    <!-- 向ParntnerData子组件传递数据 -->
+
+      <PartnerData v-else joinMode="joinMode" joinPartner="joinPartner" cityCode="340500"></PartnerData>
     </div>
       
   </div>

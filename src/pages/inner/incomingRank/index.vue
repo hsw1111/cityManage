@@ -2,39 +2,12 @@
   <div class="consumeData">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClickTab">
       <el-tab-pane name="partner">
-        <span slot="label">按加盟商</span>
-        <div class="countInfo">
-          <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
-              <span class="joinPlace">加盟区域</span>
-              <city-list v-bind:joinCity="remoteCityList" v-on:listenToChildEvetn="showMsgFormChild"></city-list>
-            </div> -->
-          <el-row class="countTitle">
-            <!-- <span class="countDimension labelAlign" style="margin-right: 0px;">统计维度</span> -->
-            <div class="timeSelectBtn" style='margin-left: -10px;'>
-              <el-button class="active" @click="handleChangeType" myId='daily'>今日</el-button>
-              <el-button @click="handleChangeType" myId='weekly'>本周</el-button>
-              <el-button @click="handleChangeType" myId='monthly'>本月</el-button>
-              <el-button @click="handleChangeType" myId='all'>所有日期</el-button>
-              <el-button @click='handleChangeType' myId='define' style="margin-right: 15px;">指定时间段</el-button>
-            </div>
-            <el-date-picker 
-              v-model="value4" 
-              type="daterange" 
-              v-show="show" 
-              placeholder="选择时间范围"  
-              style="vertical-align: top; margin-top: 0px;"
-              align="right">
-            </el-date-picker>
-            <button style="border-radius: 4px; font-size: 14px; cursor: pointer;" v-show="show" class="incomingRank_my_btn" @click="getDateByTimeLine">查询</button>
-          </el-row>
-        </div>
-        <el-row class="countDetail">
-          <router-view></router-view>
-        </el-row>
+        <span slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=partner')">按加盟商</span>
       </el-tab-pane>
       <el-tab-pane name="city">
-        <span slot="label">按地区</span>
-        <div class="countInfo">
+        <span slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=partner')">按地区</span>
+      </el-tab-pane>
+       <div class="countInfo">
           <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
               <span class="joinPlace">加盟区域</span>
               <city-list v-bind:joinCity="remoteCityList" v-on:listenToChildEvetn="showMsgFormChild"></city-list>
@@ -62,7 +35,6 @@
         <el-row class="countDetail">
           <router-view></router-view>
         </el-row>
-      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

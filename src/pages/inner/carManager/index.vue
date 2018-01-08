@@ -9,11 +9,42 @@
                 <el-form :model="form">
                   <el-row>
                     <el-row class="selectPlace_carManage">
-                      <div class="citys" style=" margin-left: 69px;color:#555">
+<!-- 新增按加盟商查询 -->
+                        <p class="select_connect">
+                          <el-select v-model="joinMode"  @change="modeChange">
+                            <el-option label="全部" value="0"></el-option>
+                            <el-option label="独家" value="1"></el-option>
+                            <el-option label="非独家" value="2"></el-option>
+                          </el-select>
+                          <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+                            <el-option label="全部加盟商" value="0"></el-option>
+                            <!-- <el-option label="加盟商1" value="1"></el-option>
+                            <el-option label="加盟商2" value="2"></el-option> -->
+                            <el-option 
+                              v-for='(item,index) in partnerLists'
+                              :key="item.id"
+                              :label='item.joinTarget=="1"?item.companyName:item.conName'
+                              :value='item.cityPartnerId'
+                              :index='index'
+                            ></el-option>
+                          </el-select>
+                          <el-select v-model="cityId" placeholder="请选择加盟商地区">
+                            <el-option label="全部地区" value="0" v-if='joinPartner=="0"'></el-option>
+                            <el-option 
+                              v-else
+                              v-for='(item,index) in citys'
+                              :key="index"
+                              :label='item.cityName'
+                              :value='item.cityId'
+                            ></el-option>
+                          </el-select>
+                        </p>
+                      <!-- <div class="citys" style=" margin-left: 69px;color:#555">
+
                         <address class="joinArea">加盟区域</address>
                         <span @click="handleClick" myId='0' class="active">全部地区</span>
                         <span @click="handleClick" :key='item.id' :myId='item.code' v-for="item in cityList">{{item.name}}</span>
-                      </div>
+                      </div> -->
                     </el-row>
                     <el-col>
                       <el-form-item class="filtercar">
@@ -196,6 +227,11 @@ import { host } from '../../../config/index.js'
 export default {
   data: function () {
     return {
+      joinMode:'0',
+      joinPartner:'0',
+      cityId:'0',
+      partnerLists:[],
+      citys:[],
       form: {
         radio: '',
         data1: '',
@@ -225,6 +261,61 @@ export default {
     this.getDateByTabName('0')
   },
   methods: {
+  
+// ----------------------------------下拉菜单三联动部分
+    searchPartner(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:this.joinMode
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.partnerLists = data
+            
+
+          }
+        })
+    },
+    // 加盟模式改变
+    modeChange(val){
+      this.searchPartner()
+      if(val=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }
+      this.joinPartner = '0'
+      this.cityId = '0'
+      
+    },
+  // 加盟商改变
+  partnerChange(val){
+    console.log(val)
+    var data = this.partnerLists.filter(item=>{
+      return item.cityPartnerId == val
+    })
+   
+    if(val=='0'){
+      this.citys = []
+      this.cityId = '0'
+    }else{
+      this.citys = data[0].areaList
+      this.cityId = this.citys[0].cityId
+    }
+    console.log(this.cityId)
+  },
+
+
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
     },
@@ -373,8 +464,11 @@ export default {
             'endOnlineTime': endTime,
             'bikeState': radio,
             'keyName': this.terminalNumber,
-            'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
-            'type': type
+            // 'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+            'cityCode': this.activeName === '已分配'?this.cityId:'',
+            'type': type,
+            'cityPartnerId':this.joinPartner,
+            'joinMode':this.joinMode
           })
           .end((error, res) => {
             if (error) {
@@ -473,7 +567,8 @@ export default {
           'endOnlineTime': endTime,
           'bikeState': radio,
           'keyName': this.terminalNumber,
-          'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+          // 'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+          'cityCode': this.activeName === '已分配'?this.cityId:'',
           'type': type
         })
         .end((error, res) => {
@@ -496,66 +591,69 @@ export default {
           }
         })
     },
-    // 通过点击城市查询
-    handleClick (e) {
-      this.currentPage = 1
-      var elems = siblings(e.target)
-      for (var i = 0; i < elems.length; i++) {
-        elems[i].setAttribute('class', '')
-      }
-      e.target.setAttribute('class', 'active')
-      /**
-       * 根据不同的加盟城市，来展示不同的数据
-       * */
-      // 清空查询信息,
-       this.form.data1 = ''
-       this.form.data2 = ''
-       this.form.radio = ''
-       this.checkList = []
-       this.terminalNumber = ''
+    // // 通过点击城市查询
+    // handleClick (e) {
+    //   this.currentPage = 1
+    //   var elems = siblings(e.target)
+    //   for (var i = 0; i < elems.length; i++) {
+    //     elems[i].setAttribute('class', '')
+    //   }
+    //   e.target.setAttribute('class', 'active')
+    //   /**
+    //    * 根据不同的加盟城市，来展示不同的数据
+    //    * */
+    //   // 清空查询信息,
+    //    this.form.data1 = ''
+    //    this.form.data2 = ''
+    //    this.form.radio = ''
+    //    this.checkList = []
+    //    this.terminalNumber = ''
 
-      // var radio = this.checkList.toString()
+    //   // var radio = this.checkList.toString()
       
   
-      this.loading2 = true
-      request
-        .post(host + 'beepartner/admin/Bike/findBike')
-        .withCredentials()
-        .set({
-          'content-type': 'application/x-www-form-urlencoded'
-        })
-        .send({
-          'type': 0,
-          'cityCode': $('.citys span.active').attr('myId'),
-          // 'startOnlineTime': this.form.data1 === ''?'':moment(this.form.data1).format('YYYY-MM-DD'),
-          // 'endOnlineTime': this.form.data2 === ''?'':moment(this.form.data2).format('YYYY-MM-DD'),
-          // 'bikeState': radio,
-          // 'keyName': this.terminalNumber,
-          'startOnlineTime': '',
-          'endOnlineTime':'',
-          'bikeState': '',
-          'keyName': '',
-        })
-        .end((error, res) => {
-          if (error) {
-            this.loading2 = false
-            console.log('error:', error)
-          } else {
-            this.checkLogin(res)
-            this.loading2 = false
-            var totalPage = Number(JSON.parse(res.text).totalPage)
-            var data = (JSON.parse(res.text)).data
-            if (totalPage > 1) {
-              this.pageShow = true
-            } else {
-              this.pageShow = false
-            }     
-            this.totalItems = Number(JSON.parse(res.text).totalItems)
-            var newData = this.tableDataDel(data)
-            this.tableData = newData
-          }
-        })
-    },
+    //   this.loading2 = true
+    //   request
+    //     .post(host + 'beepartner/admin/Bike/findBike')
+    //     .withCredentials()
+    //     .set({
+    //       'content-type': 'application/x-www-form-urlencoded'
+    //     })
+    //     .send({
+    //       'type': 0,
+    //       'cityCode': this.cityId,
+    //       'cityPartnerId':thhis.joinPartner,
+    //       // 'cityCode': $('.citys span.active').attr('myId'),
+    //       // 'startOnlineTime': this.form.data1 === ''?'':moment(this.form.data1).format('YYYY-MM-DD'),
+    //       // 'endOnlineTime': this.form.data2 === ''?'':moment(this.form.data2).format('YYYY-MM-DD'),
+    //       // 'bikeState': radio,
+    //       // 'keyName': this.terminalNumber,
+    //       'startOnlineTime': '',
+    //       'endOnlineTime':'',
+    //       'bikeState': '',
+    //       'keyName': '',
+
+    //     })
+    //     .end((error, res) => {
+    //       if (error) {
+    //         this.loading2 = false
+    //         console.log('error:', error)
+    //       } else {
+    //         this.checkLogin(res)
+    //         this.loading2 = false
+    //         var totalPage = Number(JSON.parse(res.text).totalPage)
+    //         var data = (JSON.parse(res.text)).data
+    //         if (totalPage > 1) {
+    //           this.pageShow = true
+    //         } else {
+    //           this.pageShow = false
+    //         }     
+    //         this.totalItems = Number(JSON.parse(res.text).totalItems)
+    //         var newData = this.tableDataDel(data)
+    //         this.tableData = newData
+    //       }
+    //     })
+    // },
     getTabName (tab, event) {
       // 切换tab标签时恢复默认查询标记
       this.isSearch = false
@@ -710,6 +808,9 @@ export default {
     }
   },
   watch: {
+    'joinMode':'searchByTimeline',
+    'cityId':'searchByTimeline',
+    'joinPartner':'searchByTimeline',
     'checkList': 'searchThroughCheckList',
     "form.data1": {
       handler: function (val, oldVal) {

@@ -28,7 +28,8 @@
         <el-table-column
           prop="allianceArea"
           label="加盟区域"
-          min-width="80">
+          min-width="80"
+          :render-header="rendHeader1">
         </el-table-column>
         <el-table-column
           prop="orderNum"
@@ -218,6 +219,11 @@ export default {
     }
   },
   methods: {
+     rendHeader1(h, { column, $index }){
+      var activeName = this.$route.query.activeName
+      var contentStr = activeName=='partner'?'加盟商':'加盟区域'
+      return h('div',contentStr)
+    },
     getCurrentCity (res) {
       var data = JSON.parse(res.text).data
       var arr = []

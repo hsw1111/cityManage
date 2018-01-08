@@ -2,8 +2,8 @@
   <div class="settlementManager">
         <div class="settlementManager_head1">
             <el-row class="selectPlace">
-                <p style="margin-left:17px;margin-bottom:15px;color:rgb(85, 85, 85)">
-                  <el-select v-model="joinMode" placeholder="请选择加盟模式" style="width:90px">
+                <p class="select_connect">
+                  <el-select v-model="joinMode" placeholder="请选择加盟模式">
                     <el-option label="全部" value="0"></el-option>
                     <el-option label="独家" value="1"></el-option>
                     <el-option label="非独家" value="2"></el-option>
@@ -14,7 +14,7 @@
                     <el-option label="加盟商1" value="1"></el-option>
                     <el-option label="加盟商2" value="2"></el-option>
                   </el-select>
-                  <el-select v-model="cityId" placeholder="请选择加盟商地区"  style="width:110px">
+                  <el-select v-model="cityId" placeholder="请选择加盟商地区">
                     <el-option label="全部地区" value="0" cityId="0"></el-option>
                     <el-option label="无为县" value="1"></el-option>
                     <el-option label="禹州市" value="2"></el-option>

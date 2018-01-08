@@ -136,7 +136,8 @@ export default {
           'content-type': 'application/x-www-form-urlencoded'
         })
         .send({
-          cityCode:this.cityCode.join()
+          // cityCode:this.cityCode.join()
+          cityCode:321181
         })
         .end((err, res) => {
           if (err) {

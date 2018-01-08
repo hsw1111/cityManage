@@ -27,7 +27,7 @@
  * 公网测试端口
  */
 // export const host  = 'http://47.92.136.117:7099/'
-export const host = 'http://47.93.48.250:8090/'
+// export const host = 'http://47.93.48.250:8090/'
 // export const host = 'http://47.93.48.250:8090/'
 //export const host = 'http://47.93.48.250:8090/'
 // export const host = 'http://47.93.48.250:8090/'
@@ -37,7 +37,7 @@ export const host = 'http://47.93.48.250:8090/'
 // export const host='http://47.94.39.104:8090/'
 //  export const host = 'http://192.168.0.186:8082/'
 // export const host = 'http://192.168.0.166:8080/'
-// export const host = 'http://47.93.48.250:8090/'
+export const host = 'http://47.93.48.250:8090/'
 // export const host = 'http://192.168.0.174:8080/'
 
 
@@ -55,7 +55,7 @@ import axios from 'axios'
 // export const host  = 'http://192.168.1.19:7099/'
 
 //  export const host = 'http://192.168.0.120:8081/'
-//export const host = 'http://10.31.147.119:8090/'
+// export const host = 'http://10.31.147.119:8090/'
 export var instance = axios.create({
     headers: { 'content-type': 'application/x-www-form-urlencoded' }
 });
