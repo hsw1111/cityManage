@@ -39,7 +39,8 @@
     <div class="search_wrap">
       <h4>加盟商数据</h4> 
       <div class="search">
-        <p class="select_connect">
+  <!-- 新增按加盟商查询 -->
+        <p class="select_connect"  style="margin-left:8px">
           <el-select v-model="joinMode"  @change="modeChange">
             <el-option label="全部" value="0"></el-option>
             <el-option label="独家" value="1"></el-option>
@@ -71,11 +72,11 @@
       </div>
     </div>
     <div style="padding:5px">
-      <p v-if="joinMode=='0'&&joinPartner=='0'&&cityId=='0'" style="text-align:center;height:60px;line-height:60px;font-size:14px;font-weight:400;">请先选择一个加盟商和加盟地区！</p>
+      <p v-if="joinMode=='0'||joinPartner=='0'||cityId=='0'" style="text-align:center;height:60px;line-height:60px;font-size:14px;font-weight:400;">请先选择一个加盟商和加盟地区！</p>
    
     <!-- 向ParntnerData子组件传递数据 -->
 
-      <PartnerData v-else joinMode="joinMode" joinPartner="joinPartner" cityCode="340500"></PartnerData>
+      <PartnerData v-else :joinMode="joinMode" :joinPartner="joinPartner" :cityCode="cityId"></PartnerData>
     </div>
       
   </div>
@@ -331,9 +332,15 @@ import PartnerData  from '../../../components/partnerData.vue'
 export default {
   data: function () {
     return {
+       //查询条件
       joinMode:'0',
-      joinPartner:"0",
+      joinPartner:'0',
       cityId:'0',
+      partnerLists:[],
+      temp1:[],
+      temp2:[],
+      citys:[],
+// --------------------------------
       status: [
         {
           money: 99,
@@ -386,8 +393,90 @@ export default {
     $('.sign[name="10"]').addClass('is-active')
     document.title="蜜蜂出行加盟商管理平台"
     this.getCityList()
+
+    this.searchPartner1()
+    this.searchPartner2()
   },
   methods: {
+     // ----------------------------------下拉菜单三联动部分
+
+    searchPartner1(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:1
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp1 = data
+            
+
+          }
+        })
+    },
+    searchPartner2(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:2
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp2 = data
+            
+
+          }
+        })
+    },
+    // 加盟模式改变
+    modeChange(val){
+      if(val=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }else if(val=='1'){
+         this.partnerLists = this.temp1
+      }else{
+        this.partnerLists = this.temp2
+      }
+      this.joinPartner = '0'
+      this.cityId = '0'
+      console.log(this.partnerLists)
+      
+    },
+  // 加盟商改变
+  partnerChange(val){
+    console.log(val)
+    var data = this.partnerLists.filter(item=>{
+      return item.cityPartnerId == val
+    })
+   
+    if(val=='0'){
+      this.citys = []
+      this.cityId = '0'
+    }else{
+      this.citys = data[0].areaList
+      this.cityId = this.citys[0].cityId
+    }
+    console.log(this.cityId)
+  },
     handleClick(e) {
       var elems = siblings(e.target)
       for (var i = 0; i < elems.length; i++) {

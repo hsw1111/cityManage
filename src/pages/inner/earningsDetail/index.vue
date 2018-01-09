@@ -12,13 +12,13 @@
         <div>
           <el-row class="city">
 <!-- 新增按加盟商查询 -->
-            <p class="select_connect">
+            <p class="select_connect" style="margin-left:22px">
               <el-select v-model="joinMode"  @change="modeChange">
                 <el-option label="全部" value="0"></el-option>
                 <el-option label="独家" value="1"></el-option>
                 <el-option label="非独家" value="2"></el-option>
               </el-select>
-              <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+              <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" @click='clickFun'>
                 <el-option label="全部加盟商" value="0"></el-option>
                 <!-- <el-option label="加盟商1" value="1"></el-option>
                 <el-option label="加盟商2" value="2"></el-option> -->
@@ -28,6 +28,7 @@
                   :label='item.joinTarget=="1"?item.companyName:item.conName'
                   :value='item.cityPartnerId'
                   :index='index'
+                  
                 ></el-option>
               </el-select>
               <el-select v-model="cityId" placeholder="请选择加盟商地区">
@@ -378,7 +379,7 @@ import { host } from '../../../config/index.js'
 export default {
   data () {
     return {
-      joinMode:'0',
+      joinMode:this.$route.query.joinMode||'0',
       joinPartner:'0',
       cityId:'0',
       partnerLists:[],
@@ -438,6 +439,11 @@ export default {
       sumMoney:0
     }
   },
+  created(){
+    //  this.searchPartner1()
+    //  this.searchPartner2()
+     this.hrefChange()
+  },
   mounted () {
     $(".sign").removeClass('is-active')
     $('.sign[name="40"]').addClass('is-active')
@@ -445,12 +451,12 @@ export default {
     // this.getCityList()
 
     this.getDate()
-    this.searchPartner1()
-    this.searchPartner2()
+    
+   
   },
   methods: {
+  
     // ----------------------------------下拉菜单三联动部分
-
     searchPartner1(){
       request
         .post(host + 'beepartner/admin/cityPartner/findCityPartner')
@@ -514,9 +520,50 @@ export default {
       console.log(this.partnerLists)
       
     },
+    // 从首页跳转到订单管理页面时根据joinMode处理加盟商下拉菜单
+    hrefChange(){
+      if(this.joinMode=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }else{
+        request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:this.joinMode
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.partnerLists = data
+             var partnerArr =  data.filter(item=>{
+               if(this.$route.query.cityPartnerId==item.cityPartnerId){
+                 return item
+               }
+                
+              })
+              this.joinPartner = partnerArr[0].cityPartnerId
+              this.citys = partnerArr[0].areaList
+              var cityArr = partnerArr[0].areaList.filter(item=>{
+                return this.$route.query.cityId==item.cityId
+              })
+              console.log(cityArr)
+              this.cityId = cityArr[0].cityId
+
+          }
+        })
+      }
+    },
   // 加盟商改变
   partnerChange(val){
-    console.log(val)
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
@@ -526,7 +573,7 @@ export default {
       this.cityId = '0'
     }else{
       this.citys = data[0].areaList
-      this.cityId = this.citys[0].cityId
+      this.cityId = this.$route.query.cityId||this.citys[0].cityId
     }
     console.log(this.cityId)
   },
@@ -924,7 +971,7 @@ export default {
   },
   watch:{
     'joinMode':'getDate',
-    'cityId':'getDate'
+    'cityId':'getDate',
   }
 }
 </script>

@@ -110,6 +110,7 @@ export default {
           console.log(error);
         } else {
           var result = JSON.parse(res.text);
+          // console.log('---------------------arr',result)
           var arr = result.map(list => {
             return { cityName: list.name, code: list.id };
           });
@@ -125,15 +126,19 @@ export default {
       this.cityCodeList = data;
     },
     handleClickTab(){
-        this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
+      this.show = false
+      this.value4 = []
+      this.$store.state.users.timeline = {}
+      this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
     },
     handleChangeType(e) {
+      var that = this
       switch (e.target.innerText) {
         case '今日': {
           this.form.type = 'date'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
+          this.$router.push({ query: { type: 'daily',activeName:that.activeName } })
           this.form.formatType = 'yyyy-MM-dd'
           break
         }
@@ -141,7 +146,7 @@ export default {
           this.form.type = 'week'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'weekly',activeName:this.activeName } })
+          this.$router.push({ query: { type: 'weekly',activeName:that.activeName } })
           this.form.formatType = 'yyyy 第 WW 周'
           break
         }
@@ -149,21 +154,21 @@ export default {
           this.form.type = 'month'
           this.show = false
           this.value4 = []
-          this.$router.push({ query: { type: 'monthly',activeName:this.activeName} })
+          this.$router.push({ query: { type: 'monthly',activeName:that.activeName} })
           this.form.formatType = ''
           break
         }
         case '所有日期': {
           this.show = false
-          this.$router.push({ query: { type: 'all',activeName:this.activeName } })
-          this.$store.state.users.timeline = {}
           this.value4 = []
+          this.$router.push({ query: { type: 'all',activeName:that.activeName } })
+          this.$store.state.users.timeline = {}
           this.form.formatType = ''
           break
         }
         case '指定时间段': {
-          this.$router.push({ query: { type: 'define',activeName:this.activeName } })
           this.show = true
+          this.$router.push({ query: { type: 'define',activeName:that.activeName } })
           this.form.formatType = ''
           break
         }
@@ -175,6 +180,7 @@ export default {
       e.currentTarget.setAttribute('class', 'el-button active el-button--default')
     },
     getDateByTimeLine() {
+      
       if (this.value4.length === 0) {
         this.$message({
           message: '请输入日期',
@@ -190,7 +196,6 @@ export default {
       }
     },
     routeChange () {
-      // this.value4 = []
       var that = this
       $('.timeSelectBtn button').each(function () {
         if ($(this).attr('myId') === that.$route.query.type) {

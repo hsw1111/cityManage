@@ -91,7 +91,7 @@
         <div id="search_content">
           <el-row class="selectPlace">
             <!-- 新增按加盟商查询 -->
-              <p class="select_connect">
+              <p class="select_connect account_select" style="margin-bottom: -10px;">
                 <el-select v-model="joinMode"  @change="modeChange">
                   <el-option label="全部" value="0"></el-option>
                   <el-option label="独家" value="1"></el-option>
@@ -548,7 +548,11 @@ export default {
       var obj = {
         queryName: this.accountOrUsername,
         queryNumber: this.telOrMail,
-        cityId: $('.citys span.active').attr('name')
+        // cityId: $('.citys span.active').attr('name'),
+        // cityId:this.cityId,
+        // joinMode:this.joinMode,
+        // cityPartnerId:this.joinPartner
+
       }
       console.log(obj)
       // if (this.accountOrUsername.trim().length === 0 && this.telOrMail.trim().length === 0) {
@@ -619,7 +623,7 @@ export default {
         // }
       } else {
         that.loading = true
-        getAllAccount({ cityId: this.cityId, queryName: this.accountOrUsername, queryNumber: this.telOrMail }, function(error, res) {
+        getAllAccount({ cityId: this.cityId,joinMode:this.joinMode,cityPartnerId:this.joinPartner,queryName: this.accountOrUsername, queryNumber: this.telOrMail }, function(error, res) {
           if (error) {
             console.log(error)
             setTimeout(function() {
@@ -686,6 +690,7 @@ export default {
         var that = this
         this.accountOrUsername = ""
         this.telOrMail = ""
+        that.loading = true
         request
           .post(host + 'beepartner/admin/User/findFranchiseeUser')
           .withCredentials()
@@ -693,7 +698,12 @@ export default {
             'content-type': 'application/x-www-form-urlencoded'
           })
           .send({
-            cityId: $('.citys span.active').attr('name')
+            // cityId: $('.citys span.active').attr('name')
+            cityId: this.cityId,
+            cityPartnerId:this.joinPartner,
+            joinMode:this.joinMode,
+            queryName:'',
+            queryNumber:''
           })
           .end((error, res) => {
             if (error) {
@@ -706,7 +716,7 @@ export default {
                 that.emptyText = '暂无数据'
               }, 6000)
             } else {
-              that.loading = false
+              
               that.totalPage = Number(JSON.parse(res.text).totalPage)
               var arr = JSON.parse(res.text).data
               that.totalItems = Number(JSON.parse(res.text).totalItems)
@@ -720,6 +730,7 @@ export default {
               that.$store.state.joinTableData = that.handleData(arr)
               that.joinTableData = that.$store.state.joinTableData
               that.initData = that.joinTableData
+              that.loading = false
             }
           })
       }
@@ -895,19 +906,29 @@ export default {
                 
             })
     },
-    handleClick(e) {
-      this.accountOrUsername = ""
-      this.telOrMail = ""
 
-      var elems = siblings(e.target)
-      for (var i = 0; i < elems.length; i++) {
-        elems[i].setAttribute('class', '')
-      }
+// --------------------原先点击地区查询改为按加盟商及地区查询
+    handleClick(e) {
+      // this.accountOrUsername = ""
+      // this.telOrMail = ""
+
+      // var elems = siblings(e.target)
+      // for (var i = 0; i < elems.length; i++) {
+      //   elems[i].setAttribute('class', '')
+      // }
       var that = this
-      e.target.setAttribute('class', 'active')
-      that.cityId = e.target.getAttribute('name')
+      // e.target.setAttribute('class', 'active')
+      // that.cityId = e.target.getAttribute('name')
       that.loading = true
-      getAllAccount({ cityId: that.cityId }, function(error, res) {
+      that.currentPage = 1
+      getAllAccount(
+        {
+        'joinMode':this.joinMode,
+        'cityPartnerId':this.joinPartner,
+        'cityId': this.cityId,
+        'queryName': this.isSearch === false?'':this.accountOrUsername,
+        'queryNumber': this.isSearch === false?'':this.telOrMail,
+        }, function(error, res) {
         if (error) {
           console.log(error)
           that.loading = false
@@ -931,6 +952,7 @@ export default {
         }
       })
     },
+    //编辑
     openEdit(scope) {
       console.log(scope)
       if(this.activeName==='平台'){
@@ -961,6 +983,7 @@ export default {
             this.recodeRoleId = item.id
           }
         })
+// ----加盟商
       }else{
         console.log(scope.row)
             if(scope.row.status===false){
@@ -1217,6 +1240,7 @@ export default {
         })
       }
     },
+    // 启用或冻结
     changeState(scope) {
       if (this.activeName === '平台') {
         var that = this
@@ -1318,31 +1342,31 @@ export default {
       })
       return res
     },
-    loadCity() {
-      // request.post(host + 'beepartner/admin/city/findCity')
-      request.post(host + 'beepartner/admin/city/findAreaAlreadyOpen')
-        .withCredentials()
-        .set({
-          'content-type': 'application/x-www-form-urlencoded'
-        })
-        .end((error, res) => {
-          if (error) {
-            console.log(error)
-            this.cityList = []
-          } else {
-            this.checkLogin(res)
-            // var result = JSON.parse(res.text).data
-            // var map = result.map((item) => {
-            //   var obj = {}
-            //   obj.cityId = item.cityId
-            //   obj.cityName = item.cityName
-            //   return obj
-            // })
-            // this.cityList = map
-            this.cityList = res.body
-          }
-        })
-    },
+    // loadCity() {
+    //   // request.post(host + 'beepartner/admin/city/findCity')
+    //   request.post(host + 'beepartner/admin/city/findAreaAlreadyOpen')
+    //     .withCredentials()
+    //     .set({
+    //       'content-type': 'application/x-www-form-urlencoded'
+    //     })
+    //     .end((error, res) => {
+    //       if (error) {
+    //         console.log(error)
+    //         this.cityList = []
+    //       } else {
+    //         this.checkLogin(res)
+    //         // var result = JSON.parse(res.text).data
+    //         // var map = result.map((item) => {
+    //         //   var obj = {}
+    //         //   obj.cityId = item.cityId
+    //         //   obj.cityName = item.cityName
+    //         //   return obj
+    //         // })
+    //         // this.cityList = map
+    //         this.cityList = res.body
+    //       }
+    //     })
+    // },
     handleClickTab(tab, event) {
       var that = this
       this.name = ''
@@ -1350,6 +1374,14 @@ export default {
       this.accountOrUsername = ''
       this.telOrMail = ''
       this.pageShow = false
+
+      this.cityId = '0'
+      this.joinPartner = '0'
+      this.joinMode = '0'
+      this.partnerLists = []
+      this.citys = []
+
+
       if (this.activeName === '平台') {
         this.currentPage = 1
         var that = this
@@ -1387,9 +1419,10 @@ export default {
         })
       } else {
         // 获取加盟商的列表
+        this.loading = true
         this.getAllianceList()
         
-        this.loading = true
+        
         this.currentPage = 1
         request
           .post(host + 'beepartner/admin/User/findFranchiseeUser')
@@ -1398,7 +1431,13 @@ export default {
             'content-type': 'application/x-www-form-urlencoded'
           })
           .send({
-            cityId: $('.citys span.active').attr('name')
+            // cityId: $('.citys span.active').attr('name')
+            cityId: '0',
+            joinMode:'0',
+            cityPartnerId:'0',
+            queryName:'',
+            queryNumber:''
+
           })
           .end((error, res) => {
             if (error) {
@@ -1412,7 +1451,7 @@ export default {
               }, 6000)
             } else {
               that.checkLogin(res)
-              that.loading = false
+              
               
               that.totalPage = Number(JSON.parse(res.text).totalPage)
               console.log(JSON.parse(res.text))
@@ -1430,6 +1469,7 @@ export default {
               that.joinTableData = that.$store.state.joinTableData
               that.initData = that.joinTableData
               console.log(that.initData)
+              that.loading = false
             }
           })
       }
@@ -1489,9 +1529,11 @@ export default {
 
           })
     this.loadData()
-    this.loadCity()
+    // this.loadCity()
   },
   watch: {
+    'joinMode':'handleClick',
+    'cityId':'handleClick',
     'recodeRoleName':{
       handler:function(val,oldVal){
         this.options.map((item)=>{
@@ -1565,10 +1607,15 @@ export default {
                 }
               })
           }
+          // 加盟商
         } else {
+          //加盟商
           if (this.name.trim().length === 0 && this.phone.trim().length === 0) {
             getAllAccount({
+              'joinMode':this.joinMode,
+              'cityPartnerId':this.joinPartner,
               'cityId': this.cityId,
+
               'currentPage': val,
               'queryName': this.isSearch === false?'':this.accountOrUsername,
               'queryNumber': this.isSearch === false?'':this.telOrMail
@@ -1597,8 +1644,11 @@ export default {
                 'queryName': this.isSearch === false?'':this.accountOrUsername,
                 'queryNumber': this.isSearch === false?'':this.telOrMail,
                 'type': 1,
+                'currentPage': val,
+
+                'joinMode':this.joinMode,
+                'cityPartnerId':this.joinPartner,
                 'cityId': this.cityId,
-                'currentPage': val
               })
               .withCredentials()
               .set({
@@ -1676,7 +1726,10 @@ body {
   left: 0;
   top: 0;
 }*/
-
+.el-select-dropdown li {
+    padding-left: 9px!important;
+    padding-top: 5px!important;
+}
 #account_router {
   width: 100%;
   height: 100%;
@@ -1770,7 +1823,7 @@ div.account>h1 button:hover {
   height: 70px;
   line-height: 70px;
   margin-right: 10px;
-  margin-left: 30px;
+  margin-left: 16px;
   float: left;
 }
 

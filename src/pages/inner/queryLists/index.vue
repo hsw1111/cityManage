@@ -26,16 +26,19 @@
         element-loading-text="拼命加载中"
         style="width: 100%">
         <el-table-column
-          prop="allianceArea"
           label="加盟区域"
           min-width="80"
           :render-header="rendHeader1">
+<!--          判断是显示加盟商还是加盟区域                 -->
+          <template slot-scope="scope">
+            {{$route.query.activeName=='partner'?(scope.row.companyName||scope.row.conName):scope.row.allianceArea}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="orderNum"
           label="订单数"
           min-width="80">
-             <template slot-scope="scope">
+          <template slot-scope="scope">
             {{new Number(scope.row.orderNum).thousand()}}
           </template>
         </el-table-column>
@@ -241,66 +244,65 @@ export default {
       console.log('this.$store.state', this.$store.state.users.incomingCityListStr)
       console.log('arr', arr)
     },
+// -------------点击切换页码
     handleCurrentChange (val) {
-      this.loading2 = true
-      request
-        .post(host + 'beepartner/admin/statistics/adminStatistics')
-        .withCredentials()
-        .set({
-          'content-type': 'application/x-www-form-urlencoded'
-        })
-        .send({
-           cityId:this.cityId,
-          'type': this.signForQuery === true?'define':this.$route.query.type,
-          'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
-            'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
-          'currentPage': val,
-          'showType': 'table'
-        })
-        .end((error, res) => {
-          if (error) {
-            this.loading2 = false
-            console.log('error:', error)
-          } else {
-            this.checkLogin(res)
-            this.getCurrentCity(res)
-            this.loading2 = false
-            var arr = JSON.parse(res.text).data
-            var totalPage = Number(JSON.parse(res.text).totalPage)
-            this.totalItems = Number(JSON.parse(res.text).totalItems)
-            if (totalPage > 1) {
-              this.pageShow = true
+      // 按加盟商
+      if(this.$route.query.activeName=='partner'){
+        this.loading2 = true
+        request
+          .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+          .withCredentials()
+          .set({
+            'content-type': 'application/x-www-form-urlencoded'
+          })
+          .send({
+            'type': this.signForQuery === true?'define':this.$route.query.type,
+            'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+              'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+            'currentPage': val,
+            'showType': 'table'
+          })
+          .end((error, res) => {
+            if (error) {
+              this.loading2 = false
+              console.log('error:', error)
             } else {
-              this.pageShow = false
+              this.checkLogin(res)
+              this.getCurrentCity(res)
+              this.loading2 = false
+              var arr = JSON.parse(res.text).data
+              var totalPage = Number(JSON.parse(res.text).totalPage)
+              this.totalItems = Number(JSON.parse(res.text).totalItems)
+              if (totalPage > 1) {
+                this.pageShow = true
+              } else {
+                this.pageShow = false
+              }
+              var newArr = [] 
+              console.log('--------------------------------',arr)
+              if(arr.length!=0){
+                  for (var i = 0; i < arr.length; i++) {
+                var obj = {}
+                obj.allianceArea = arr[i].cityName
+                obj.orderNum = arr[i].totalBill
+                obj.totalBill = arr[i].totalMoney
+                obj.couponAmount = arr[i].totalDiscount
+                obj.userPayAmount = arr[i].actualMoney
+                obj.grantAmount = arr[i].grantAmount
+
+                obj.conName = arr[i].conName
+                obj.companyName = arr[i].companyName
+                obj.joinTarget = arr[i].joinTarget
+                newArr.push(obj)
+              }
+              this.$store.dispatch('consumeData_action', {newArr})
+              this.lists = this.$store.state.users.consumeData
+              }
+              
             }
-            var newArr = [] 
-            if(arr.length!=0){
-                for (var i = 0; i < arr.length; i++) {
-              var obj = {}
-              obj.allianceArea = arr[i].cityName
-              obj.orderNum = arr[i].totalBill
-              obj.totalBill = arr[i].totalMoney
-              obj.couponAmount = arr[i].totalDiscount
-              obj.userPayAmount = arr[i].actualMoney
-              obj.grantAmount = arr[i].grantAmount
-              newArr.push(obj)
-            }
-            this.$store.dispatch('consumeData_action', {newArr})
-            this.lists = this.$store.state.users.consumeData
-            }
-            
-          }
-        })
-    },
-    handeClick () {
-      this.$router.push('/index/incomingRank/queryCharts?type=' + this.$route.query.type)
-    },
-    dataUpdate () {
-      if (this.$route.query.type === 'define') {
-        return
-      } else {
-        this.currentPage = 1
-        this.signForQuery = false
+          })
+      // 按地区
+      }else{
         this.loading2 = true
         request
           .post(host + 'beepartner/admin/statistics/adminStatistics')
@@ -309,16 +311,236 @@ export default {
             'content-type': 'application/x-www-form-urlencoded'
           })
           .send({
-             cityId:this.cityId,
-            'type': this.$route.query.type,
-            'currentPage': 1,
-            'showType': 'table',
+            cityId:this.cityId,
+            'type': this.signForQuery === true?'define':this.$route.query.type,
             'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
-            'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:''
+              'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+            'currentPage': val,
+            'showType': 'table'
           })
           .end((error, res) => {
             if (error) {
               this.loading2 = false
+              console.log('error:', error)
+            } else {
+              this.checkLogin(res)
+              this.getCurrentCity(res)
+              this.loading2 = false
+              var arr = JSON.parse(res.text).data
+              var totalPage = Number(JSON.parse(res.text).totalPage)
+              this.totalItems = Number(JSON.parse(res.text).totalItems)
+              if (totalPage > 1) {
+                this.pageShow = true
+              } else {
+                this.pageShow = false
+              }
+              var newArr = [] 
+              if(arr.length!=0){
+                  for (var i = 0; i < arr.length; i++) {
+                var obj = {}
+                obj.allianceArea = arr[i].cityName
+                obj.orderNum = arr[i].totalBill
+                obj.totalBill = arr[i].totalMoney
+                obj.couponAmount = arr[i].totalDiscount
+                obj.userPayAmount = arr[i].actualMoney
+                obj.grantAmount = arr[i].grantAmount
+                newArr.push(obj)
+              }
+              this.$store.dispatch('consumeData_action', {newArr})
+              this.lists = this.$store.state.users.consumeData
+              }
+              
+            }
+          })
+      }
+      
+    },
+    handeClick () {
+      this.$router.push('/index/incomingRank/queryCharts?type=' + this.$route.query.type + "&activeName=" + this.$route.query.activeName)
+    },
+//------------数据更新
+    dataUpdate () {
+      if (this.$route.query.type === 'define') {
+        return
+      } else {
+        // 按加盟商
+        if(this.$route.query.activeName=='partner'){
+          this.currentPage = 1
+          this.signForQuery = false
+          this.loading2 = true
+          request
+            .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+            .withCredentials()
+            .set({
+              'content-type': 'application/x-www-form-urlencoded'
+            })
+            .send({
+              'type': this.$route.query.type,
+              'currentPage': 1,
+              'showType': 'table',
+              'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+              'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:''
+            })
+            .end((error, res) => {
+              if (error) {
+                this.loading2 = false
+                console.log('error:', error)
+              } else {
+                this.checkLogin(res)
+                this.getCurrentCity(res)
+                this.loading2 = false
+                var arr = JSON.parse(res.text).data
+                var totalPage = Number(JSON.parse(res.text).totalPage)
+                this.totalItems = Number(JSON.parse(res.text).totalItems)
+                if (totalPage > 1) {
+                  this.pageShow = true
+                } else {
+                  this.pageShow = false
+                }
+                var newArr = [] 
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.allianceArea = arr[i].cityName
+                  obj.orderNum = arr[i].totalBill
+                  obj.totalBill = arr[i].totalMoney
+                  obj.couponAmount = arr[i].totalDiscount
+                  obj.userPayAmount = arr[i].actualMoney
+                  obj.grantAmount = arr[i].grantAmount
+
+                  obj.conName = arr[i].conName
+                  obj.companyName = arr[i].companyName
+                  obj.joinTarget = arr[i].joinTarget
+                  newArr.push(obj)
+                }
+                this.$store.dispatch('consumeData_action', {newArr})
+                this.lists = this.$store.state.users.consumeData
+              }
+            })
+        }else{
+          // 按地区
+          this.currentPage = 1
+          this.signForQuery = false
+          this.loading2 = true
+          request
+            .post(host + 'beepartner/admin/statistics/adminStatistics')
+            .withCredentials()
+            .set({
+              'content-type': 'application/x-www-form-urlencoded'
+            })
+            .send({
+              cityId:this.cityId,
+              'type': this.$route.query.type,
+              'currentPage': 1,
+              'showType': 'table',
+              'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+              'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:''
+            })
+            .end((error, res) => {
+              if (error) {
+                this.loading2 = false
+                console.log('error:', error)
+              } else {
+                this.checkLogin(res)
+                this.getCurrentCity(res)
+                this.loading2 = false
+                var arr = JSON.parse(res.text).data
+                var totalPage = Number(JSON.parse(res.text).totalPage)
+                this.totalItems = Number(JSON.parse(res.text).totalItems)
+                if (totalPage > 1) {
+                  this.pageShow = true
+                } else {
+                  this.pageShow = false
+                }
+                var newArr = [] 
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.allianceArea = arr[i].cityName
+                  obj.orderNum = arr[i].totalBill
+                  obj.totalBill = arr[i].totalMoney
+                  obj.couponAmount = arr[i].totalDiscount
+                  obj.userPayAmount = arr[i].actualMoney
+                  obj.grantAmount = arr[i].grantAmount
+                  newArr.push(obj)
+                }
+                this.$store.dispatch('consumeData_action', {newArr})
+                this.lists = this.$store.state.users.consumeData
+              }
+            })
+        }
+        
+      }
+    },
+    //获取初始今日数据
+    getDateMount () {
+// -----------------------------按加盟商
+      if(this.$route.query.activeName=='partner'){
+        this.loading2 = true
+        request
+          .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+          .withCredentials()
+          .set({
+            'content-type': 'application/x-www-form-urlencoded'
+          })
+          .send({
+            'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+            'endTimeStr':isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+            'type': this.$route.query.type,
+            'currentPage': this.currentPage,
+            'showType': 'table'
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              this.checkLogin(res)
+              this.getCurrentCity(res)
+              this.loading2 = false
+              var arr = JSON.parse(res.text).data
+              var totalPage = Number(JSON.parse(res.text).totalPage)
+              this.totalItems = Number(JSON.parse(res.text).totalItems)
+              if (totalPage > 1) {
+                this.pageShow = true
+              } else {
+                this.pageShow = false
+              }
+              var newArr = [] 
+              for (var i = 0; i < arr.length; i++) {
+                var obj = {}
+                obj.allianceArea = arr[i].cityName
+                obj.orderNum = arr[i].totalBill
+                obj.totalBill = arr[i].totalMoney
+                obj.couponAmount = arr[i].totalDiscount
+                obj.userPayAmount = arr[i].actualMoney
+                obj.grantAmount = arr[i].grantAmount
+                
+                obj.conName = arr[i].conName
+                obj.companyName = arr[i].companyName
+                obj.joinTarget = arr[i].joinTarget
+                newArr.push(obj)
+              }
+              this.$store.dispatch('consumeData_action', {newArr})
+              this.lists = this.$store.state.users.consumeData
+            }
+          })
+// -----------------------------按地区       
+      }else{
+        this.loading2 = true
+        request
+          .post(host + 'beepartner/admin/statistics/adminStatistics')
+          .withCredentials()
+          .set({
+            'content-type': 'application/x-www-form-urlencoded'
+          })
+          .send({
+            cityId:this.cityId,
+            'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+            'endTimeStr':isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+            'type': this.$route.query.type,
+            'currentPage': this.currentPage,
+            'showType': 'table'
+          })
+          .end((error, res) => {
+            if (error) {
               console.log('error:', error)
             } else {
               this.checkLogin(res)
@@ -348,60 +570,71 @@ export default {
             }
           })
       }
-    },
-    getDateMount () {
-      this.loading2 = true
-      request
-        .post(host + 'beepartner/admin/statistics/adminStatistics')
-        .withCredentials()
-        .set({
-          'content-type': 'application/x-www-form-urlencoded'
-        })
-        .send({
-          cityId:this.cityId,
-          'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
-          'endTimeStr':isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
-          'type': this.$route.query.type,
-          'currentPage': this.currentPage,
-          'showType': 'table'
-        })
-        .end((error, res) => {
-          if (error) {
-            console.log('error:', error)
-          } else {
-            this.checkLogin(res)
-            this.getCurrentCity(res)
-            this.loading2 = false
-            var arr = JSON.parse(res.text).data
-            var totalPage = Number(JSON.parse(res.text).totalPage)
-            this.totalItems = Number(JSON.parse(res.text).totalItems)
-            if (totalPage > 1) {
-              this.pageShow = true
-            } else {
-              this.pageShow = false
-            }
-            var newArr = [] 
-            for (var i = 0; i < arr.length; i++) {
-              var obj = {}
-              obj.allianceArea = arr[i].cityName
-              obj.orderNum = arr[i].totalBill
-              obj.totalBill = arr[i].totalMoney
-              obj.couponAmount = arr[i].totalDiscount
-              obj.userPayAmount = arr[i].actualMoney
-              obj.grantAmount = arr[i].grantAmount
-              newArr.push(obj)
-            }
-            this.$store.dispatch('consumeData_action', {newArr})
-            this.lists = this.$store.state.users.consumeData
-          }
-        })
+      
     },
     time () {
       var type = this.$route.query.type
       if (this.$store.state.users.timeline.length === 0) {
         return
       } else {
-          this.currentPage = 1
+          if(this.$route.query.activeName=='partner'){
+            this.currentPage = 1
+          this.signForQuery = true
+          this.loading2 = true
+          request
+            .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+            .withCredentials()
+            .set({
+              'content-type': 'application/x-www-form-urlencoded'
+            })
+            .send({
+              'type': type,
+              'currentPage': 1,
+              'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+              'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+              'showType': 'table'
+            })
+            .end((error, res) => {
+              if (error) {
+                this.loading2 = false
+                console.log('error:', error)
+              } else {
+                this.checkLogin(res)
+                this.getCurrentCity(res)
+                this.loading2 = false
+
+                var totalPage = Number(JSON.parse(res.text).totalPage)
+                this.totalItems = Number(JSON.parse(res.text).totalItems)
+                if (totalPage > 1) {
+                  this.pageShow = true
+                } else {
+                  this.pageShow = false
+                }
+                
+                var arr = JSON.parse(res.text).data
+                var newArr = []
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.allianceArea = arr[i].cityName
+                  obj.orderNum = arr[i].totalBill
+                  obj.totalBill = arr[i].totalMoney
+                  obj.couponAmount = arr[i].totalDiscount
+                  obj.userPayAmount = arr[i].actualMoney
+                  obj.grantAmount = arr[i].grantAmount
+
+                  obj.conName = arr[i].conName
+                  obj.companyName = arr[i].companyName
+                  obj.joinTarget = arr[i].joinTarget
+
+                  newArr.push(obj)
+                }
+                this.$store.dispatch('consumeData_action', {newArr})
+                this.lists = this.$store.state.users.consumeData
+                }
+
+            })
+          }else{
+            this.currentPage = 1
           this.signForQuery = true
           this.loading2 = true
           request
@@ -452,6 +685,7 @@ export default {
                 }
 
             })
+          }
 
       }
     },

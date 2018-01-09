@@ -135,7 +135,7 @@ export default {
   },
   methods: {
     handleClick () {
-      this.$router.push('/index/incomingRank?type=' + this.$route.query.type)
+      this.$router.push('/index/incomingRank?type=' + this.$route.query.type + "&activeName=" + this.$route.query.activeName)
     }
   },
   components: {

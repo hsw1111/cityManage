@@ -24,7 +24,7 @@
         <el-col :span='12' class="dayIncoming">
           <div class="income_title">
             <span class="income_time daytime ">今日营收</span>
-            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurDay&cityId=' + cityCodeList.join()})">>></span>
+            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=0&joinMode='+ joinMode +'&cityPartnerId=' + joinPartner +'&cityId=' + cityCode})">>></span>
           </div>
           <div v-loading="loading3">
              <div>
@@ -73,13 +73,13 @@
             <span style="display:none;" class="arrow">>></span>
           </div>
           <div class="Histogram">
-            <myCanvas :cityCode="cityCodeList"></myCanvas>
+            <myCanvas :cityCode="cityCodeList" :cityPartnerId='joinPartner'></myCanvas>
           </div>
         </el-col>
         <el-col :span='12' class="status">
           <div class="status_title">
             <span>当前动态</span>
-            <span class="arrow" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurDay&cityId=' + cityCodeList.join()})">>></span>
+            <span class="arrow" @click="$router.push({path: '/index/earningsDetail?type=0&joinMode='+ joinMode +'&cityPartnerId=' + joinPartner +'&cityId=' + cityCode})">>></span>
           </div>
           <div class="list" v-loading="loading">
             <div>
@@ -381,7 +381,7 @@ import request from "superagent";
 import { host } from "../config/index";
 // import $ from "jquery";
 export default {
-  props:['cityCode'],
+  props:['cityCode','joinPartner','joinMode'],
   data: function() {
     return {
       remoteCityList: [],
@@ -447,6 +447,10 @@ export default {
       this.cityCodeList = data;
     },
     loadIndexData() {
+      // cityPartnerId为0时不发送请求
+      if(this.joinPartner=='0'){
+        return
+      }
       /*今日营收*/
       request
         .post(host + "beepartner/franchisee/statistics/franchiseeRevenue")
@@ -456,7 +460,8 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId: this.cityCode
+          cityId: this.cityCode,
+          cityPartnerId:this.joinPartner
         })
         .end((err, res) => {
           if (err) {
@@ -489,7 +494,8 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId: this.cityCode
+          cityId: this.cityCode,
+          cityPartnerId:this.joinPartner
         })
         .end((err, res) => {
           if (err) {
@@ -517,7 +523,8 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId: this.cityCode
+          cityId: this.cityCode,
+          cityPartnerId:this.joinPartner
         })
         .end((err, res) => {
           if (err) {
@@ -567,7 +574,8 @@ export default {
         })
         .send({
           // cityId: this.cityCodeList.join()
-          cityId: this.cityCode
+          cityId: this.cityCode,
+          cityPartnerId:this.joinPartner
         })
         .end((err, res) => {
           if (err) {
@@ -609,6 +617,7 @@ export default {
     // cityCodeList: function() {
     //   this.loadIndexData();
     // }
+    'cityCode':'loadIndexData'
   }
 };
 </script>

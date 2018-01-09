@@ -43,7 +43,57 @@ export default {
   },
   methods: {
     loadData(){
-       request
+      if(this.$route.query.activeName=='partner'){
+         request
+        .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          'type': this.$route.query.type,
+          'cityList': this.$store.state.users.incomingCityListStr.toString(),
+          'showType': 'chart',
+          'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+          'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:''
+        })
+        .end((error, res) => {
+          if (error) {
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            var arr = JSON.parse(res.text).data
+            var newArr = []
+            for (var i = 0; i < arr.length; i++) {
+              var obj = {}
+              obj.allianceArea = arr[i].cityName
+              obj.orderNum = arr[i].totalBill
+              obj.totalBill = arr[i].totalMoney
+              obj.couponAmount = arr[i].totalDiscount
+              obj.userPayAmount = arr[i].actualMoney
+
+              obj.conName = arr[i].conName
+              obj.companyName = arr[i].companyName
+              obj.joinTarget = arr[i].joinTarget
+              newArr.push(obj)
+            }
+            this.$store.dispatch('consumeData_action', { newArr })
+            this.getChartDate()
+            /**
+             * 判断是否显示暂无数据
+             */
+           
+            if (arr.length === 0) {
+              $('#container').html('')
+              this.noData = true
+            } else {
+              this.noData = false
+              this.createChartsShap()
+            }
+          }
+        })
+      }else{
+         request
         .post(host + 'beepartner/admin/statistics/adminStatistics')
         .withCredentials()
         .set({
@@ -88,6 +138,7 @@ export default {
             }
           }
         })
+      }
     },
     createChartsShap() {
       if (this.consumeMoney.length === 0 && this.orderNumber === 0) {
@@ -181,7 +232,12 @@ export default {
     },
     getChartDate() {
       var res = this.$store.state.users.consumeData.map((item) => {
-        return item.allianceArea
+        if(this.$route.query.activeName=='partner'){
+          return item.companyName||item.conName
+        }else{
+          return item.allianceArea
+        }
+        
       })
 
       var order = this.$store.state.users.consumeData.map((item) => {
@@ -197,7 +253,11 @@ export default {
     },
     getChartByRoute(arr) {
       var res = arr.map((item) => {
-          return item.allianceArea
+          if(this.$route.query.activeName=='partner'){
+            return item.companyName||item.conName
+          }else{
+            return item.allianceArea
+          }
         })
 
         var order = arr.map((item) => {
@@ -218,7 +278,53 @@ export default {
       if (this.$route.query.type === 'define') {
       return
     } else {
-      request
+      if(this.$route.query.activeName=='partner'){
+        request
+        .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          'type': this.$route.query.type,
+          'showType': 'chart',
+          'cityList': this.$store.state.users.incomingCityListStr.toString(),
+           'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+            'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:''
+        })
+        .end((error, res) => {
+          if (error) {
+            console.log('error:', error)
+          } else {
+            if (JSON.parse(res.text).data.length === 0) {
+              $('#container').html('')
+              this.noData = true
+            } else {
+              this.checkLogin(res)
+              this.noData = false
+              var arr = JSON.parse(res.text).data
+              var newArr = []
+              for (var i = 0; i < arr.length; i++) {
+                var obj = {}
+                obj.allianceArea = arr[i].cityName
+                obj.orderNum = arr[i].totalBill
+                obj.totalBill = arr[i].totalMoney
+                obj.couponAmount = arr[i].totalDiscount
+                obj.userPayAmount = arr[i].actualMoney
+
+                obj.conName = arr[i].conName
+                obj.companyName = arr[i].companyName
+                obj.joinTarget = arr[i].joinTarget
+                newArr.push(obj)
+              }
+
+              this.getChartByRoute(newArr)
+              this.createChartsShap()
+            }
+          }
+        })
+      }else{
+        request
         .post(host + 'beepartner/admin/statistics/adminStatistics')
         .withCredentials()
         .set({
@@ -260,6 +366,8 @@ export default {
           }
         })
       }
+      
+      }
     },
     time() {
       var type = this.$route.query.type
@@ -272,7 +380,55 @@ export default {
           type: 'warning'
         })
       } else {
-        request
+        if(this.$route.query.activeName=='partner'){
+          request
+          .post(host + 'beepartner/admin/statistics/adminStatisticsBy')
+          .withCredentials()
+          .set({
+            'content-type': 'application/x-www-form-urlencoded'
+          })
+          .send({
+            'startTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time1:'',
+            'endTimeStr': isOwnEmpty(this.$store.state.users.timeline)==false?this.$store.state.users.timeline.newObj.time2:'',
+            'type': type,
+            'cityList': this.$store.state.users.incomingCityListStr.toString(),
+            'showType': 'chart'
+          })
+          .end((error, res) => {
+            if (error) {
+              console.log('error:', error)
+            } else {
+              if (JSON.parse(res.text).data.length === 0) {
+                $('#container').html('')
+                this.noData = true
+                return;
+              } else {
+                
+                this.checkLogin(res)
+                this.noData = false
+                var arr = JSON.parse(res.text).data
+                var newArr = []
+                for (var i = 0; i < arr.length; i++) {
+                  var obj = {}
+                  obj.allianceArea = arr[i].cityName
+                  obj.orderNum = arr[i].totalBill
+                  obj.totalBill = arr[i].totalMoney
+                  obj.couponAmount = arr[i].totalDiscount
+                  obj.userPayAmount = arr[i].actualMoney
+
+                  obj.conName = arr[i].conName
+                  obj.companyName = arr[i].companyName
+                  obj.joinTarget = arr[i].joinTarget
+                  newArr.push(obj)
+                }
+                this.getChartByRoute(newArr)
+                this.createChartsShap()
+              }
+             
+            }
+          })
+        }else{
+          request
           .post(host + 'beepartner/admin/statistics/adminStatistics')
           .withCredentials()
           .set({
@@ -314,6 +470,7 @@ export default {
              
             }
           })
+        }
 
       }
     },

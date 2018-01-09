@@ -3,7 +3,7 @@
         <div class="settlementManager_head1">
             <el-row class="selectPlace">
 <!-- 新增按加盟商查询 -->
-              <p class="select_connect">
+              <p class="select_connect"  style="margin-left:8px">
                 <el-select v-model="joinMode"  @change="modeChange">
                   <el-option label="全部" value="0"></el-option>
                   <el-option label="独家" value="1"></el-option>

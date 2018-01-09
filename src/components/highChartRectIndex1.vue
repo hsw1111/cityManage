@@ -19,7 +19,7 @@ export default {
       active:true
     }
   },
-  props:['cityCode'],
+  props:['cityCode','cityPartnerId'],
   methods: {
     generateAxis() {
       var nowTime = new Date().getHours().toString()
@@ -128,7 +128,10 @@ export default {
       return color
     },
     loadData() {
-     
+      if(this.cityPartnerId=='0'){
+        return
+      }
+
       var that = this
       request.post(host + 'beepartner/franchisee/statistics/franchiseeTrend')
         .withCredentials()
@@ -137,7 +140,8 @@ export default {
         })
         .send({
           // cityCode:this.cityCode.join()
-          cityCode:321181
+          cityCode:this.cityCode,
+          cityPartnerId:this.joinPartner
         })
         .end((err, res) => {
           if (err) {
@@ -186,6 +190,7 @@ export default {
     //   },
     //   deeper:true
     // }
+    'cityCode':'loadData'
   }
 }
 </script>

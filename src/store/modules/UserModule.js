@@ -41,7 +41,7 @@ const mutations = {
     consumeData_evaluation(state, { newArr }) {
         // console.log('[[ consumeData_evaluation is commited ]]')
         state.consumeData = newArr.newArr
-        // console.log(state.consumeData)
+        // console.log('-------------------------------state.consumeData',state.consumeData)
     },
     earningDate_detail(state, { arr }) {
         // console.log('[[ earningDate_detail is commited ]]')
@@ -54,6 +54,7 @@ const mutations = {
     setTimeLine(state, { obj }) {
         // console.log('[[ timeline is setted ]]')
         state.timeline = obj
+        console.log('-------------------------------state.timeline',state.timeline)
     },
     setAllData(state, { obj }) {
         // console.log('[[ setAllData is setted ]]')
