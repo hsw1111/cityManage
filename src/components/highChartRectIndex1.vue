@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="container" v-bind:class={isShow:active} v-loading="loading"></div>
+    <div id="containers" v-bind:class={isShow:active} v-loading="loading"></div>
     <div v-show="active" class="nodata">暂无数据</div>
   </div>
 </template>
@@ -35,8 +35,10 @@ export default {
       }
     },
     generateCharts(categories, data) {
-      Highcharts.chart('container', {
-        /** Highcharts 配置 */
+      Highcharts.chart('containers', {
+       /** Highcharts 配置 */
+        colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00',
+                '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
         lang: {
           printChart: '打印图表',
           contextButtonTitle: '图表导出菜单',
@@ -48,8 +50,8 @@ export default {
         },
         plotOptions:{
           column: {
-            //pointWidth: 30,
-            maxPointWidth: 100 // 设置最大宽度
+            pointWidth: 20,
+            maxPointWidth: 30 // 设置最大宽度
           }
         }, 
         credits: {
@@ -69,7 +71,7 @@ export default {
           crosshair: true
         },
         yAxis: {
-           allowDecimals: false,
+          //  allowDecimals: false,
           title: {
             text: ''
           },
@@ -93,6 +95,7 @@ export default {
             name: ' ',
             color: '#74f7af',
             data: data,
+            colorByPoint:true,
             tooltip: {
               valueSuffix: '单',
               useHTML: true,
@@ -141,7 +144,7 @@ export default {
         .send({
           // cityCode:this.cityCode.join()
           cityCode:this.cityCode,
-          cityPartnerId:this.joinPartner
+          cityPartnerId:this.cityPartnerId
         })
         .end((err, res) => {
           if (err) {
@@ -162,7 +165,9 @@ export default {
               var _time = [];
                 var res = data.map((item) => {
                  _time.push(item.statisticId.split('').reverse().splice(0,2).reverse().join('') + ':00')
-                  return {color:that.randomColor(), y: item.totalBill }
+    // 固定柱状图的颜色
+                  // return {color:that.randomColor(), y: item.totalBill }
+                  return {y: item.totalBill }
                 })
                 this.data = res
                
@@ -195,13 +200,13 @@ export default {
 }
 </script>
 <style>
-div#container {
+div#containers {
   width: 100%;
   height: 237px;
   padding-top: 6px;
 }
 
-div#container g.highcharts-legend-item {
+div#containers g.highcharts-legend-item {
   display: none;
 }
 div.nodata{line-height:200px;text-align:center;}

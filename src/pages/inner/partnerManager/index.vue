@@ -1307,7 +1307,7 @@ export default {
                 this.tableData[i].joinDay = this.tableData[i].joinDays.replace(/\//g,"/<br>")
                 this.tableData[i].subscriptionNumStrs = this.tableData[i].subscriptionNumStr.replace(/\//g,"/<br>")
               }
-              console.log("loadData",this.tableData)
+              // console.log("loadData",this.tableData)
               if (pageNumber > 1) {
                 that.pageShow = true;
               } else {
@@ -1729,9 +1729,9 @@ export default {
         });
     },
     openEdit(row, index) {
-      console.log(row)
+      // console.log(row)
      this.$router.push({ path: "/index/partnerManager/updatepartner",query:{cityPartnerId:row.cityPartnerId,joinTarget:row.joinTarget,currentPage:this.currentPage}});
-     console.log(row)
+    //  console.log(row)
       return;
       request
         .post(host + "beepartner/admin/withDraw/findWithdrawsCount")
@@ -1750,7 +1750,7 @@ export default {
             this.checkLogin(res);
             var newArr = [];
             var list = JSON.parse(res.text).data;
-            console.log(list)
+            // console.log(list)
             var arr = [];
             list.map(item => {
               var obj = {};

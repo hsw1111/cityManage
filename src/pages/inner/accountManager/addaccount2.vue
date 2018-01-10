@@ -314,9 +314,9 @@ export default {
                 })
                 .end((error,res)=>{
                     this.checkLogin(res)
-                    console.log('allianceList', res)
+                    // console.log('allianceList', res)
                     var data = JSON.parse(res.text).data
-                    console.log('data', data)
+                    // console.log('data', data)
 
 
                     this.allianceList = data

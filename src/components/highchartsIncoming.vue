@@ -5,7 +5,7 @@
         <img src="../assets/img/2.png" style="margin-top:100px"/>
         <p>暂无数据</p>
       </div>
-      <div v-loading="loading" id="container2" style="height:400px" v-show="!noData"></div>
+      <div v-loading="loading" id="container2" style="height:300px" v-show="!noData"></div>
       <!-- <div v-loading="loading" id="container2"  v-show="!noData"></div> -->
   </div>
 </template>

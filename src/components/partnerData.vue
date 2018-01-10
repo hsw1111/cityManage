@@ -10,7 +10,7 @@
         <el-col :span='12' class="mounthIncoming">
           <div class="income_title">
             <span class="income_time mounthtime ">本月营收</span>
-            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=getRevenueCurMonth&cityId=' + cityCodeList.join()})">>></span>
+            <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=2&joinMode='+ joinMode +'&cityPartnerId=' + joinPartner +'&cityId=' + cityCode})">>></span>
           </div>
           <div v-loading="loading2">
             <div class="income_count monthcount">
@@ -54,7 +54,7 @@
               <el-col :span="5" class="using">{{waitLend===null?'待出租暂无':'待出租' + new Number(waitLend).thousand()  +'辆'}}</el-col>
               <el-col :span="5"> {{rented===null?'已出租暂无':'已出租' + new Number(rented).thousand() +'辆'}}</el-col>
               <el-col :span="5">{{ordered===null?'已预定暂无':'已预定' + new Number(ordered).thousand() +'辆'}}</el-col>
-              <el-col :span="4">{{repaired===null?'维护中暂无':'维护中' + new Number(repaired).thousand()  +'辆'}} <span  style="color:gray;font-weight:normal; float:right;cursor:pointer" class="arrow" @click="$router.push({path:'/index/carManager',query:{cityId:cityCodeList.join()}})">&gt;&gt;</span></el-col>
+              <el-col :span="4">{{repaired===null?'维护中暂无':'维护中' + new Number(repaired).thousand()  +'辆'}} <span  style="color:gray;font-weight:normal; float:right;cursor:pointer" class="arrow" @click="$router.push({path:'/index/carManager',query:{joinMode:joinMode,cityPartnerId:joinPartner,cityId:cityCode}})">&gt;&gt;</span></el-col>
             </el-col> 
           </el-row>
         </div>
@@ -73,7 +73,7 @@
             <span style="display:none;" class="arrow">>></span>
           </div>
           <div class="Histogram">
-            <myCanvas :cityCode="cityCodeList" :cityPartnerId='joinPartner'></myCanvas>
+            <HourTrend :cityCode="cityCode" :cityPartnerId='joinPartner'></HourTrend>
           </div>
         </el-col>
         <el-col :span='12' class="status">
@@ -375,7 +375,7 @@ i.wait {
 </style>
 <script>
 import cityList from "./cityList.vue";
-import myCanvas from "./highChartRectIndex1.vue";
+import HourTrend from "./highChartRectIndex1.vue";
 // import Gamp from '../../../components/map.vue'
 import request from "superagent";
 import { host } from "../config/index";
@@ -437,7 +437,7 @@ export default {
       });
   },
   components: {
-    myCanvas,
+    HourTrend,
     cityList
     // Gamp
   },

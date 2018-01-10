@@ -677,7 +677,7 @@ export default {
    
   },
   mounted: function() {
-    console.log(this.$route.query.cityPartnerId)
+    // console.log(this.$route.query.cityPartnerId)
      this.$refs['ruleForm'].resetFields();
    // var newFormObject =  {id:this.initNum++,joinTime:'',subscriptionNum:'',subscriptionMoney:'',licenseFeeRate:'',wType:'',firstDealDate:'',customTime:''}
    
@@ -784,7 +784,7 @@ export default {
             this.ruleForm.conPhone = this.row.conPhone;
             this.ruleForm.conEmail = this.row.conEmail;
 
-            console.log(this.row)
+            // console.log(this.row)
             
             // 判断是否同时添加联系人平台账号
             // 但是row.password与row.userName均为空
@@ -806,7 +806,7 @@ export default {
     // 判断加盟与结算信息部分是否为空
     isEmpty(index){
       $("#isEmpty").on("blur","input",function(){
-        console.log("--------------------")
+
          $(".divisionPercent").on("input","input",function(){
           $(this).parents(".is-required").find(".error-list").remove()
           $(this).parents(".is-required").removeClass("is-error")

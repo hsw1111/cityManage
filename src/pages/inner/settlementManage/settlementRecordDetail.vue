@@ -607,7 +607,7 @@ import {thousandFormat} from '../../../util/util.js'
           if (code === 1) {
             var newArr = JSON.parse(res.text).data
             this.items = newArr
-            console.log(newArr)
+            // console.log(newArr)
             this.totalProfit =  JSON.parse(res.text).withDrawRecord.totalProfit
             this.actProfit = JSON.parse(res.text).withDrawRecord.actProfit
             this.actProfitStr = JSON.parse(res.text).withDrawRecord.totalProfit
@@ -654,7 +654,7 @@ import {thousandFormat} from '../../../util/util.js'
           if(err){
             console.log(err)
           }else{
-            console.log(res)
+            // console.log(res)
             var code = JSON.parse(res.text).resultCode
             var message = JSON.parse(res.text).message
             if(code===1){

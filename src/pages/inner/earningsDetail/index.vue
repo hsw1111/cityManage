@@ -241,7 +241,7 @@
       background:#faebd7;
       border: 1px solid #e7ecf1;
       overflow: hidden;
-      padding-bottom: 15px;
+      padding-bottom: 12px;
       padding-top: 5px;
     }
 
@@ -380,8 +380,9 @@ export default {
   data () {
     return {
       joinMode:this.$route.query.joinMode||'0',
-      joinPartner:'0',
-      cityId:'0',
+      // 注意cityPartnerId为字符串
+      joinPartner:Number(this.$route.query.cityPartnerId)||'0',
+      cityId:this.$route.query.cityId||'0',
       partnerLists:[],
       temp1:[],
       temp2:[],
@@ -440,9 +441,10 @@ export default {
     }
   },
   created(){
-    //  this.searchPartner1()
-    //  this.searchPartner2()
      this.hrefChange()
+     this.searchPartner1()
+     this.searchPartner2()
+     
   },
   mounted () {
     $(".sign").removeClass('is-active')
@@ -550,13 +552,7 @@ export default {
                }
                 
               })
-              this.joinPartner = partnerArr[0].cityPartnerId
               this.citys = partnerArr[0].areaList
-              var cityArr = partnerArr[0].areaList.filter(item=>{
-                return this.$route.query.cityId==item.cityId
-              })
-              console.log(cityArr)
-              this.cityId = cityArr[0].cityId
 
           }
         })
@@ -573,7 +569,7 @@ export default {
       this.cityId = '0'
     }else{
       this.citys = data[0].areaList
-      this.cityId = this.$route.query.cityId||this.citys[0].cityId
+      this.cityId = this.citys[0].cityId
     }
     console.log(this.cityId)
   },
@@ -619,6 +615,7 @@ export default {
         this.show = true
         this.show2 = true
       }
+      this.currentPage = 1;
       this.loading2 = true
       request
         .post(host + 'beepartner/admin/order/findOrder4Admin')
@@ -628,6 +625,7 @@ export default {
         })
         .send({
           'type': this.$route.query.type,
+          'pageNum':1,
           // 'cityId': $('.citys span.active').attr('myId'),
           'cityId': this.cityId,
           'joinMode':this.joinMode,
@@ -970,7 +968,7 @@ export default {
     }
   },
   watch:{
-    'joinMode':'getDate',
+    // 'joinMode':'getDate',
     'cityId':'getDate',
   }
 }

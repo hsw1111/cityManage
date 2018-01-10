@@ -644,7 +644,7 @@ export default {
             // this.franchiseeDetail = Object.assign({},res,{joinTime:moment(res.joinTime).format('YYYY年MM月DD号')})
             this.franchiseeDetail = res
             
-            console.log('加盟商详情数据',res)
+            // console.log('加盟商详情数据',res)
 
             this.loading2 = true
               request.post(host + 'beepartner/admin/cityPartner/getNotAllotBikes')
@@ -704,7 +704,7 @@ export default {
       //new Set(this.countAllotCars)
     },
     handleSelectionAll(selection) {
-      console.log(selection)
+      // console.log(selection)
       this.multipleSelection = selection;
       this.tempcar = [...this.multipleSelection];
       if(this.countAllotCars.length>0){

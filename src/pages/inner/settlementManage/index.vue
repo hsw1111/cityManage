@@ -227,7 +227,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp1 = data
             
@@ -251,7 +251,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp2 = data
             
@@ -271,12 +271,12 @@ export default {
       }
       this.joinPartner = '0'
       this.cityId = '0'
-      console.log(this.partnerLists)
+      // console.log(this.partnerLists)
       
     },
   // 加盟商改变
   partnerChange(val){
-    console.log(val)
+    // console.log(val)
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
@@ -288,7 +288,7 @@ export default {
       this.citys = data[0].areaList
       this.cityId = this.citys[0].cityId
     }
-    console.log(this.cityId)
+    // console.log(this.cityId)
   },
 
     handleCurrentChange(val) {
@@ -318,7 +318,7 @@ export default {
           } else {
             this.checkLogin(res)
             var data = JSON.parse(res.text).data
-            console.log("findWithDraw",data)
+            // console.log("findWithDraw",data)
             this.totalItems = Number(JSON.parse(res.text).totalItems)
             var totalPage = Number(JSON.parse(res.text).totalPage)
             if (totalPage > 1) {
@@ -336,7 +336,7 @@ export default {
     handleClick(e) {
       this.loading2 = true
 
-      // this.currentPage = 1
+      this.currentPage = 1
       // var elems = siblings(e.target)
       // for (var i = 0; i < elems.length; i++) {
       //   elems[i].setAttribute('class', '')
@@ -443,7 +443,7 @@ export default {
               this.loading2 = false
               var newData = this.tableDataDel(data)
               this.tableData = newData
-              console.log(this.tableData)
+              // console.log(this.tableData)
             }
            
           }
@@ -613,7 +613,7 @@ div.settlementManager_head1 {
 }
 
 div.settlementManager_head2 {
-    padding: 5px 10px 20px 10px;
+    padding: 5px 10px 18px 10px;
     background: #faebd7;
 }
 

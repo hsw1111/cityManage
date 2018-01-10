@@ -227,9 +227,9 @@ import { host } from '../../../config/index.js'
 export default {
   data: function () {
     return {
-      joinMode:'0',
-      joinPartner:'0',
-      cityId:'0',
+      joinMode:this.$route.query.joinMode||'0',
+      joinPartner:Number(this.$route.query.cityPartnerId)||'0',
+      cityId:this.$route.query.cityId||'0',
       partnerLists:[],
       temp1:[],
       temp2:[],
@@ -256,6 +256,7 @@ export default {
     }
   },
   created(){
+    this.hrefChange()
     this.searchPartner1()
     this.searchPartner2()
   },
@@ -321,6 +322,42 @@ export default {
 
           }
         })
+    },
+     // 从首页跳转到订单管理页面时根据joinMode处理加盟商下拉菜单
+    hrefChange(){
+      if(this.joinMode=='0'){
+        this.partnerLists = []
+        this.citys = []
+      }else{
+        request
+        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:this.joinMode
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            this.checkLogin(res)
+            console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.partnerLists = data
+             var partnerArr =  data.filter(item=>{
+               if(this.$route.query.cityPartnerId==item.cityPartnerId){
+                 return item
+               }
+                
+              })
+              this.citys = partnerArr[0].areaList
+
+          }
+        })
+      }
     },
     // 加盟模式改变
     modeChange(val){
@@ -736,7 +773,7 @@ export default {
         })
         .send({
           'type': type,
-          'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
+          'cityCode': this.activeName === '已分配'?this.cityId:'',
           'startOnlineTime': this.form.data1 === ''?'':moment(this.form.data1).format('YYYY-MM-DD'),
           'endOnlineTime': this.form.data2 === ''?'':moment(this.form.data2).format('YYYY-MM-DD'),
           'bikeState': radio,
@@ -832,8 +869,10 @@ export default {
                 'endOnlineTime': endTime,
                 'bikeState': radio,
                 'keyName': this.terminalNumber,
-                'cityCode': this.activeName === '已分配'?$('.citys span.active').attr('myId'):'',
-                'type': type
+                'cityCode': this.activeName === '已分配'?this.cityId:'',
+                'type': type,
+                'cityPartnerId':this.cityPartnerId,
+                'joinMode':this.joinMode
               })
               .end((error, res) => {
                 if (error) {
@@ -863,7 +902,7 @@ export default {
     }
   },
   watch: {
-    'joinMode':'searchByTimeline',
+    // 'joinMode':'searchByTimeline',
     'cityId':'searchByTimeline',
     // 'joinPartner':'searchByTimeline',
     'checkList': 'searchThroughCheckList',
@@ -988,7 +1027,7 @@ export default {
 
   .carManager_content {
     background: #faebd7;
-    padding: 16px 30px 12px 20px;
+    padding: 12px 30px 6px 20px;
     margin-bottom: 20px;
     /* border: 1px solid #e7ecf1; */
   }

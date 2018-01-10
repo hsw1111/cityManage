@@ -360,7 +360,7 @@ export default {
                   //  that.$loading({customClass: 'loading_class'}).close()
                   // } else {
                   //   that.$loading({customClass: 'loading_class'}).close()
-                  console.log(res)
+                  // console.log(res)
                   window.location.href = (res.body.data)
                   }
                 // }
@@ -429,7 +429,7 @@ export default {
           console.log(error)
         }else{
           var res = JSON.parse(res.text).data
-          console.log("queryBikeNum",res)
+          // console.log("queryBikeNum",res)
           if(!isOwnEmpty(res)){
             this.relationBikeNum = res.bikeNum
             // this.relationJoinTime  = res.joinTime
@@ -624,7 +624,7 @@ export default {
             }
             this.	alreadyWidthDrawMoney = JSON.parse(res.text).cityPartner?JSON.parse(res.text).cityPartner.alreadyWidthDrawMoney:0
             this.alreadyWidthDrawTimes = JSON.parse(res.text).cityPartner?JSON.parse(res.text).cityPartner.alreadyWidthDrawTimes:0
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
           })
       } else {
         this.pageShow = false
@@ -672,7 +672,7 @@ export default {
     }
   },
     created() {
-      console.log(this.$route.params)
+      // console.log(this.$route.params)
       var cityPartnerId = this.$route.params.id.split('&')[1]
       
       // 初始化调用查询可加盟城市的接口,动态渲染数据

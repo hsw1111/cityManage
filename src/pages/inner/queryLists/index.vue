@@ -241,8 +241,8 @@ export default {
       })
 
       this.$store.dispatch('setIncomingCityList', arr)
-      console.log('this.$store.state', this.$store.state.users.incomingCityListStr)
-      console.log('arr', arr)
+      // console.log('this.$store.state', this.$store.state.users.incomingCityListStr)
+      // console.log('arr', arr)
     },
 // -------------点击切换页码
     handleCurrentChange (val) {
@@ -279,7 +279,7 @@ export default {
                 this.pageShow = false
               }
               var newArr = [] 
-              console.log('--------------------------------',arr)
+              // console.log('--------------------------------',arr)
               if(arr.length!=0){
                   for (var i = 0; i < arr.length; i++) {
                 var obj = {}

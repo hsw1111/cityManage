@@ -743,7 +743,6 @@ export default {
           }
         
            if($(this).attr("placeholder")=="请输入加盟资金(元)"){
-             console.log("hhhhhhhhhhhhhhhhhhhhhhhh")
            $(this).parents(".is-required").append('<div class="error-list" style="font-size: 12px;color:#ff4949;margin-left: 150px;position:absolute;">请输入加盟资金</div>')
           }
            if($(this).attr("placeholder")=="请输入授权费率"){
@@ -874,7 +873,7 @@ export default {
     checkJoinMode(val,index){
      // 清空中间部分验证不通过的信息
      this.joinMode = val;
-     console.log(val)
+    //  console.log(val)
      this.getJoinAreaList();
      setTimeout(function(){
           if($("#isEmpty .is-required.is-error")){
