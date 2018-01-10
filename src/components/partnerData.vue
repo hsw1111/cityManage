@@ -26,7 +26,7 @@
             <span class="income_time daytime ">今日营收</span>
             <span class="income_detail" @click="$router.push({path: '/index/earningsDetail?type=0&joinMode='+ joinMode +'&cityPartnerId=' + joinPartner +'&cityId=' + cityCode})">>></span>
           </div>
-          <div v-loading="loading3">
+          <div v-loading="loading">
              <div>
                <div class="income_count daycount">
                 {{todayIncoming===null?'暂无数据':'￥' + new Number(todayIncoming).thousandFormat()}}
@@ -81,7 +81,7 @@
             <span>当前动态</span>
             <span class="arrow" @click="$router.push({path: '/index/earningsDetail?type=0&joinMode='+ joinMode +'&cityPartnerId=' + joinPartner +'&cityId=' + cityCode})">>></span>
           </div>
-          <div class="list" v-loading="loading">
+          <div class="list" v-loading="loading4">
             <div>
               <ul>
                 <li v-bind:key="statu.carNum" v-for="statu of status">
@@ -103,7 +103,7 @@
   
     <div style="background:#fff;">
       <div class="settlementInfo module">
-        <el-row v-loading="loading5">
+        <el-row v-loading="loading3">
           <el-col :span="6" style="text-align:center;margin-left: -30px;">
             <span class="earn" style="position:relative;">当前已为您赚到<span class="settle">{{franchiseeAllIncome===null?'暂无数据':'￥' + new Number(franchiseeAllIncome).thousandFormat()}}</span>
               <i class="wait">
@@ -451,6 +451,11 @@ export default {
       if(this.joinPartner=='0'){
         return
       }
+      this.loading = true;
+      this.loading2 = true;
+      this.loading3 = true;
+      this.loading4 = true;
+
       /*今日营收*/
       request
         .post(host + "beepartner/franchisee/statistics/franchiseeRevenue")
@@ -466,9 +471,9 @@ export default {
         .end((err, res) => {
           if (err) {
             console.log(err);
-            this.loading3 = false;
+            this.loading = false;
           } else {
-            this.loading3 = false;
+            this.loading = false;
             var code = JSON.parse(res.text).resultCode;
             if (code != -1) {
               var result = JSON.parse(res.text).data;
@@ -530,6 +535,7 @@ export default {
           if (err) {
             console.log(err);
           } else {
+            this.loading3 = false;
             this.cityPartner = JSON.parse(res.text).cityPartner;
             var code = JSON.parse(res.text).resultCode;
             if (code != -1) {
@@ -580,9 +586,9 @@ export default {
         .end((err, res) => {
           if (err) {
             console.log(err);
-            this.loading = false;
+            this.loading4 = false;
           } else {
-            this.loading = false;
+            this.loading4 = false;
             var result = JSON.parse(res.text).data || [];
             if (result.length == 0) {
               this.nowStatus = true;

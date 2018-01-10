@@ -1532,7 +1532,7 @@ export default {
     // this.loadCity()
   },
   watch: {
-    'joinMode':'handleClick',
+    // 'joinMode':'handleClick',
     'cityId':'handleClick',
     'recodeRoleName':{
       handler:function(val,oldVal){

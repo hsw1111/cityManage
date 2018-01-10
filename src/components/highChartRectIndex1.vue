@@ -134,7 +134,7 @@ export default {
       if(this.cityPartnerId=='0'){
         return
       }
-
+      this.loading = true
       var that = this
       request.post(host + 'beepartner/franchisee/statistics/franchiseeTrend')
         .withCredentials()

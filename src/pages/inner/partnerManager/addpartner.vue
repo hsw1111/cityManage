@@ -8,302 +8,303 @@
         </a>
       </span>
     </h1>
-    <!-- 表单部分 -->
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
-      <el-form-item label="加盟对象">
-        <el-radio-group v-model="radio" v-on:change='clickChange'>
-          <el-radio label="1" value="1">企业</el-radio>
-          <el-radio label="2" value="2">个人</el-radio>
-        </el-radio-group>
-      </el-form-item>
-        <!-- 加盟对象为企业时头部 -->
-      <div v-if="radio=='1'">    
-        <el-form-item label="企业名称" prop="companyName">
-          <el-input v-model="ruleForm.companyName" placeholder='长度不超过100字符'></el-input>
-        </el-form-item>
-        <el-form-item label="营业执照注册号" prop="businessLicense">
-          <el-input v-model="ruleForm.businessLicense" placeholder='请输入营业执照注册号'></el-input>
-        </el-form-item>
-        <el-form-item label="通讯地址" prop="address">
-          <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
-        </el-form-item>
-      </div>
-      
-        <!-- 加盟对象为个人时头部 -->
-      <div v-if="radio=='2'">
-        <el-form-item label="姓名" prop="conName">
-          <el-input v-model="ruleForm.conName" placeholder='请输入姓名' id="xx"></el-input>
-        </el-form-item>
-
-        <!-- 证件类别会影响重置表单,写两个隐藏的表单占位 -->
-        <el-form-item label="手机号" prop="phone" style="display:none">
-          <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone" style="display:none">
-          <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
-        </el-form-item>
-
-
-        <el-form-item label="证件类别">
-          <el-select v-model="ruleForm.conCardType" placeholder="请选择证件类别" prop="conCardType">
-            <el-option label="身份证" value="身份证"></el-option>
-            <el-option label="护照" value="护照"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="证件号码" prop="conIdCard">
-          <el-input v-model="ruleForm.conIdCard" placeholder='请输入证件号码'></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" prop="conPhone">
-          <el-input v-model="ruleForm.conPhone" placeholder='请输入手机号'></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="conEmail">
-          <el-input v-model="ruleForm.conEmail" placeholder='请输入邮箱'></el-input>
-        </el-form-item>
-        <el-form-item label="通讯地址" prop="address">
-          <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
-        </el-form-item>
-      </div>
-
-        <!-- 加盟与结算信息部分 -->
-      <h1 class="form_table_h1">加盟与结算信息</h1>
-        
-        <!-- 选择加盟方式 -->
-      <div id="isEmpty">
-      <div class="mutiFormSelect" v-bind:key="list.id" v-for="(list,index) of ruleForm.multiForm">
-        <div class="menuIcon">
-          <i style="cursor:pointer;" @click="addMutiCity(index)" class="iconfont icon-jia"></i>
-          <i v-show="ruleForm.multiForm.length>1" style="cursor:pointer;" @click="removeMutiCity(index)" class="iconfont icon-jian"></i>
-        </div>
-        <el-form-item label="加盟模式" 
-          :rules="[
-              { required: true, message: '请选择加盟模式', trigger: 'blur' },
-            ]"
-            :id="'joinMode'+index"
-          >
-          <el-radio-group v-model="list.joinMode" @change="checkJoinMode(list.joinMode,index)">
-            <!-- 此处修改，判断是个人时，独家除了禁用，且不被选中 -->
-            <el-radio :label="radio=='1'?'1':''" :disabled="radio=='2'" value="1">独家</el-radio>
-            <el-radio label="2" value="2">非独家</el-radio>
+    <div id="addpartner_content">
+      <!-- 表单部分 -->
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
+        <el-form-item label="加盟对象">
+          <el-radio-group v-model="radio" v-on:change='clickChange'>
+            <el-radio label="1" value="1">企业</el-radio>
+            <el-radio label="2" value="2">个人</el-radio>
           </el-radio-group>
-          <span style="font-size:12px;color:#ccc;display:block;line-height:1.5">加盟模式是独家时，一个地区只允许一个企业加盟；非独家时，一个地区允许多个个人(或企业)加盟</span>
         </el-form-item>
-
-        <!-- 独家时显示 -->
-        <!-- 1、当页面第一次加载打开时，从后台拿到数据list.joinMode的值为1，此时独家的内容显示出来
-              2、当页面切换到个人时，即radio=='2'，需要加载的非独家内容,但是如果此时
-              设置添加一个加盟信息，发现独家的信息也在，所以判断添加加盟信息radio=='2'时，
-              需要将list.joinMode的值改为2，具体操作在addMutiCity方法中
-              3、当页面再次切换到企业时，此时可以显示独家信息正常，但是如果再添加一个加盟信息，发现又多了
-              一个独家的信息，因为切换回来之前list.joinMode的值为2，所以判断这种情况下，将独家信息隐藏
-              || (radio=='2'||list.joinMode=='2'?false:true)
+          <!-- 加盟对象为企业时头部 -->
+        <div v-if="radio=='1'">    
+          <el-form-item label="企业名称" prop="companyName">
+            <el-input v-model="ruleForm.companyName" placeholder='长度不超过100字符'></el-input>
+          </el-form-item>
+          <el-form-item label="营业执照注册号" prop="businessLicense">
+            <el-input v-model="ruleForm.businessLicense" placeholder='请输入营业执照注册号'></el-input>
+          </el-form-item>
+          <el-form-item label="通讯地址" prop="address">
+            <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
+          </el-form-item>
+        </div>
         
-          -->
-        <div v-if="list.joinMode=='1' || (radio=='2'||list.joinMode=='2'?false:true)">
-          <el-form-item class="joinPlace" label="加盟地区" :id="'cityId'+ index" >
-            <el-select v-model="list.cityId" placeholder="请选择">
-              <el-option
-                v-for="item in ruleForm.options"
-                :key="item.value"
-                :label="item.label"
-                :value="item">
-              </el-option>
+          <!-- 加盟对象为个人时头部 -->
+        <div v-if="radio=='2'">
+          <el-form-item label="姓名" prop="conName">
+            <el-input v-model="ruleForm.conName" placeholder='请输入姓名' id="xx"></el-input>
+          </el-form-item>
+
+          <!-- 证件类别会影响重置表单,写两个隐藏的表单占位 -->
+          <el-form-item label="手机号" prop="phone" style="display:none">
+            <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
+          </el-form-item>
+          <el-form-item label="手机号" prop="phone" style="display:none">
+            <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
+          </el-form-item>
+
+
+          <el-form-item label="证件类别">
+            <el-select v-model="ruleForm.conCardType" placeholder="请选择证件类别" prop="conCardType">
+              <el-option label="身份证" value="身份证"></el-option>
+              <el-option label="护照" value="护照"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item class="joinPlace" label="加盟日期" :id="'joinTime'+ index">
-            <el-date-picker
-              v-model="list.joinTime"
-              placeholder="选择日期">
-            </el-date-picker>            
+          <el-form-item label="证件号码" prop="conIdCard">
+            <el-input v-model="ruleForm.conIdCard" placeholder='请输入证件号码'></el-input>
           </el-form-item>
-          <el-form-item label="认购车辆" :id="'subscriptionNum'+ index"  :rules="[
-                  { required: true, message: '请输入认购车辆', trigger: 'blur' },
-                ]">
-            <el-input v-model="list.subscriptionNum" placeholder='请输入车辆数(单位：/辆)'></el-input><span style="margin-left:5px;">辆</span>
+          <el-form-item label="手机号" prop="conPhone">
+            <el-input v-model="ruleForm.conPhone" placeholder='请输入手机号'></el-input>
           </el-form-item>
-          <el-form-item label="加盟资金" :id="'subscriptionMoney'+ index" :rules="[
-                { required: true, message: '请输入加盟资金', trigger: 'blur' },
-              ]">
-            <el-input v-model="list.subscriptionMoney" placeholder='请输入加盟资金(元)'></el-input><span style="margin-left:5px;">元</span>
+          <el-form-item label="邮箱" prop="conEmail">
+            <el-input v-model="ruleForm.conEmail" placeholder='请输入邮箱'></el-input>
           </el-form-item>
-          <el-form-item style="position: relative; top: -22px; margin-bottom: 0px;">
-            <div class="el-form-item__error" v-show="areaError">该地区已经存在加盟商，请重新选择</div>
-          </el-form-item>	
-          <el-form-item label="授权费率" :id="'licenseFeeRate'+ index" :rules="[
-                { required: true, message: '请输入授权费率', trigger: 'blur' },
-              ]">
-            <el-input max="100" min="0" v-model.number="list.licenseFeeRate" placeholder='请输入授权费率'></el-input><span style="margin-left:5px;">%</span>
+          <el-form-item label="通讯地址" prop="address">
+            <el-input v-model="ruleForm.address" placeholder='请输入地址'></el-input>
           </el-form-item>
-          <el-form-item class="zhouqi" label="结算周期" :id="'wType'+ index" :rules="[
-                { required: true, message: '请选择结算周期', trigger: 'blur' },
-              ]">
-            <el-radio-group v-model="list.wType" @change="checkSettleType">
-              <el-radio label="自然月" value='0'></el-radio>
-              <el-radio label="自然周(周一到周日)" value='1'></el-radio>
-              <el-radio label="自定义" value='2'></el-radio>
-              <div id="customInputId" v-show="list.wType=='自定义'">
-                <el-input :id="'circleDays'+ index" class="customInput"  
-                  v-model="list.circleDays"
-                  placeholder="请输入正整数（天）"
-                  style="display:inline-block;width:143px;">
-                </el-input>
-                <span>天</span>
-              </div>
-            </el-radio-group>
-          </el-form-item>
-          <h1 class="form_table_h2" style="margin-top:-13px;margin-bottom:20px">次周期结算上一个结算周期的收益，如果第一个周期不满一个结算周期也进行结算</h1>
-          <el-form-item class="first_day date joinPlace"  label="首次结算开始日期" :id="'firstDealDate'+ index">
-                <el-date-picker
-                  :readonly="isHaveSettleOrders"
-                  v-model="list.firstDealDate"
-                  placeholder="选择日期">
-                </el-date-picker>           
-          </el-form-item>
-          <h1 class="form_table_h2" style="margin-top:-10px;margin-bottom:10px">生成结算单后，此日期不允许修改</h1>
         </div>
 
-        <!-- 个人或者非独家时 -->
-        <div v-if="list.joinMode=='2'|| radio=='2'">
-          <el-form-item class="joinPlace" label="加盟地区" :id="'cityId'+ index">
+          <!-- 加盟与结算信息部分 -->
+        <h1 class="form_table_h1">加盟与结算信息</h1>
+          
+          <!-- 选择加盟方式 -->
+        <div id="isEmpty">
+        <div class="mutiFormSelect" v-bind:key="list.id" v-for="(list,index) of ruleForm.multiForm">
+          <div class="menuIcon">
+            <i style="cursor:pointer;" @click="addMutiCity(index)" class="iconfont icon-jia"></i>
+            <i v-show="ruleForm.multiForm.length>1" style="cursor:pointer;" @click="removeMutiCity(index)" class="iconfont icon-jian"></i>
+          </div>
+          <el-form-item label="加盟模式" 
+            :rules="[
+                { required: true, message: '请选择加盟模式', trigger: 'blur' },
+              ]"
+              :id="'joinMode'+index"
+            >
+            <el-radio-group v-model="list.joinMode" @change="checkJoinMode(list.joinMode,index)">
+              <!-- 此处修改，判断是个人时，独家除了禁用，且不被选中 -->
+              <el-radio :label="radio=='1'?'1':''" :disabled="radio=='2'" value="1">独家</el-radio>
+              <el-radio label="2" value="2">非独家</el-radio>
+            </el-radio-group>
+            <span style="font-size:12px;color:#ccc;display:block;line-height:1.5">加盟模式是独家时，一个地区只允许一个企业加盟；非独家时，一个地区允许多个个人(或企业)加盟</span>
+          </el-form-item>
+
+          <!-- 独家时显示 -->
+          <!-- 1、当页面第一次加载打开时，从后台拿到数据list.joinMode的值为1，此时独家的内容显示出来
+                2、当页面切换到个人时，即radio=='2'，需要加载的非独家内容,但是如果此时
+                设置添加一个加盟信息，发现独家的信息也在，所以判断添加加盟信息radio=='2'时，
+                需要将list.joinMode的值改为2，具体操作在addMutiCity方法中
+                3、当页面再次切换到企业时，此时可以显示独家信息正常，但是如果再添加一个加盟信息，发现又多了
+                一个独家的信息，因为切换回来之前list.joinMode的值为2，所以判断这种情况下，将独家信息隐藏
+                || (radio=='2'||list.joinMode=='2'?false:true)
+          
+            -->
+          <div v-if="list.joinMode=='1' || (radio=='2'||list.joinMode=='2'?false:true)">
+            <el-form-item class="joinPlace" label="加盟地区" :id="'cityId'+ index" >
               <el-select v-model="list.cityId" placeholder="请选择">
                 <el-option
-                  v-for="item in ruleForm.options1"
+                  v-for="item in ruleForm.options"
                   :key="item.value"
                   :label="item.label"
                   :value="item">
                 </el-option>
               </el-select>
-          </el-form-item>
-          <el-form-item label="加盟日期"  class="joinPlace"  :id="'joinTime'+ index" >
+            </el-form-item>
+            <el-form-item class="joinPlace" label="加盟日期" :id="'joinTime'+ index">
               <el-date-picker
                 v-model="list.joinTime"
                 placeholder="选择日期">
-              </el-date-picker> 
-                        
-          </el-form-item>
-          <el-form-item label="认购车辆" :id="'subscriptionNum'+ index" :rules="[
-                { required: true, message: '请输入认购车辆数', trigger: 'blur' },
-              ]">
+              </el-date-picker>            
+            </el-form-item>
+            <el-form-item label="认购车辆" :id="'subscriptionNum'+ index"  :rules="[
+                    { required: true, message: '请输入认购车辆', trigger: 'blur' },
+                  ]">
               <el-input v-model="list.subscriptionNum" placeholder='请输入车辆数(单位：/辆)'></el-input><span style="margin-left:5px;">辆</span>
-          </el-form-item>
-          <el-form-item label="加盟资金" :id="'subscriptionMoney'+ index"  :rules="[
-                { required: true, message: '请输入加盟资金', trigger: 'blur' },
-              ]">
-            <el-input v-model.number="list.subscriptionMoney" placeholder='请输入加盟资金(元)'></el-input><span style="margin-left:5px;">元</span>
-          </el-form-item>
-          <el-form-item style="position: relative; top: -22px; margin-bottom: 0px;">
-            <div class="el-form-item__error" v-show="areaError">该地区已经存在加盟商，请重新选择</div>
-          </el-form-item>
-          <el-form-item label="运营管理费" :id="'manageFee'+ index"  :rules="[
-                { required: true, message: '请输入运营管理费', trigger: 'blur' },
-              ]" style="width:600px">
-              <el-input v-model.number="list.manageFee" placeholder='请输入运营管理费'></el-input><span style="margin-left:5px;">元/车.天</span>
-          </el-form-item>
-          <el-form-item class="zhouqi" label="结算日"
-            :id="'settleDays'+index"
-            :rules="[
-                { required: true, message: '请选择结算日', trigger: 'blur' },
-              ]"
-              >
-        
-            <el-checkbox-group v-model="list.dayList"  @change="checkSettleDays">
-              <el-checkbox label="1">每月1号</el-checkbox>
-              <el-checkbox label="16">每月16号</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <h1 class="form_table_h2" style="margin-top:-13px;margin-bottom:12px">次周期结算上一个结算周期的收益，如果第一个周期不满一个结算周期也进行结算</h1>
-          <el-form-item class="joinPlace" label="首次结算开始日期" :id="'firstDealDate'+ index">
-              <el-date-picker
-                :readonly="isHaveSettleOrders"
-                v-model="list.firstDealDate"
-                placeholder="选择日期">
-              </el-date-picker>           
-          </el-form-item>
-          <h1 class="form_table_h2" style="margin-top:-10px;margin-bottom:20px">生成结算单后，此日期不允许修改</h1>
-           <el-form-item label="后期分成比例" class="divisionPercent" :id="'divisionPercent'+ index" :rules="[
-                { required: true, message: '请输入后期分成比例', trigger: 'blur' }
-              ]">
-            <el-input v-model.number="list.divisionPercent" placeholder='请输入后期分成比例'></el-input><span style="margin-left:5px;">%</span>
-          </el-form-item>
-          <h1 class="form_table_h2" style="margin-top:-12px;margin-bottom:20px">加盟商的累计收益超过投入的加盟资金时，从下个结算周期开始，加盟商的收益采用分成模式</h1>
+            </el-form-item>
+            <el-form-item label="加盟资金" :id="'subscriptionMoney'+ index" :rules="[
+                  { required: true, message: '请输入加盟资金', trigger: 'blur' },
+                ]">
+              <el-input v-model="list.subscriptionMoney" placeholder='请输入加盟资金(元)'></el-input><span style="margin-left:5px;">元</span>
+            </el-form-item>
+            <el-form-item style="position: relative; top: -22px; margin-bottom: 0px;">
+              <div class="el-form-item__error" v-show="areaError">该地区已经存在加盟商，请重新选择</div>
+            </el-form-item>	
+            <el-form-item label="授权费率" :id="'licenseFeeRate'+ index" :rules="[
+                  { required: true, message: '请输入授权费率', trigger: 'blur' },
+                ]">
+              <el-input max="100" min="0" v-model.number="list.licenseFeeRate" placeholder='请输入授权费率'></el-input><span style="margin-left:5px;">%</span>
+            </el-form-item>
+            <el-form-item class="zhouqi" label="结算周期" :id="'wType'+ index" :rules="[
+                  { required: true, message: '请选择结算周期', trigger: 'blur' },
+                ]">
+              <el-radio-group v-model="list.wType" @change="checkSettleType">
+                <el-radio label="自然月" value='0'></el-radio>
+                <el-radio label="自然周(周一到周日)" value='1'></el-radio>
+                <el-radio label="自定义" value='2'></el-radio>
+                <div id="customInputId" v-show="list.wType=='自定义'">
+                  <el-input :id="'circleDays'+ index" class="customInput"  
+                    v-model="list.circleDays"
+                    placeholder="请输入正整数（天）"
+                    style="display:inline-block;width:143px;">
+                  </el-input>
+                  <span>天</span>
+                </div>
+              </el-radio-group>
+            </el-form-item>
+            <h1 class="form_table_h2" style="margin-top:-13px;margin-bottom:20px">次周期结算上一个结算周期的收益，如果第一个周期不满一个结算周期也进行结算</h1>
+            <el-form-item class="first_day date joinPlace"  label="首次结算开始日期" :id="'firstDealDate'+ index">
+                  <el-date-picker
+                    :readonly="isHaveSettleOrders"
+                    v-model="list.firstDealDate"
+                    placeholder="选择日期">
+                  </el-date-picker>           
+            </el-form-item>
+            <h1 class="form_table_h2" style="margin-top:-10px;margin-bottom:10px">生成结算单后，此日期不允许修改</h1>
+          </div>
+
+          <!-- 个人或者非独家时 -->
+          <div v-if="list.joinMode=='2'|| radio=='2'">
+            <el-form-item class="joinPlace" label="加盟地区" :id="'cityId'+ index">
+                <el-select v-model="list.cityId" placeholder="请选择">
+                  <el-option
+                    v-for="item in ruleForm.options1"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item">
+                  </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="加盟日期"  class="joinPlace"  :id="'joinTime'+ index" >
+                <el-date-picker
+                  v-model="list.joinTime"
+                  placeholder="选择日期">
+                </el-date-picker> 
+                          
+            </el-form-item>
+            <el-form-item label="认购车辆" :id="'subscriptionNum'+ index" :rules="[
+                  { required: true, message: '请输入认购车辆数', trigger: 'blur' },
+                ]">
+                <el-input v-model="list.subscriptionNum" placeholder='请输入车辆数(单位：/辆)'></el-input><span style="margin-left:5px;">辆</span>
+            </el-form-item>
+            <el-form-item label="加盟资金" :id="'subscriptionMoney'+ index"  :rules="[
+                  { required: true, message: '请输入加盟资金', trigger: 'blur' },
+                ]">
+              <el-input v-model.number="list.subscriptionMoney" placeholder='请输入加盟资金(元)'></el-input><span style="margin-left:5px;">元</span>
+            </el-form-item>
+            <el-form-item style="position: relative; top: -22px; margin-bottom: 0px;">
+              <div class="el-form-item__error" v-show="areaError">该地区已经存在加盟商，请重新选择</div>
+            </el-form-item>
+            <el-form-item label="运营管理费" :id="'manageFee'+ index"  :rules="[
+                  { required: true, message: '请输入运营管理费', trigger: 'blur' },
+                ]" style="width:600px">
+                <el-input v-model.number="list.manageFee" placeholder='请输入运营管理费'></el-input><span style="margin-left:5px;">元/车.天</span>
+            </el-form-item>
+            <el-form-item class="zhouqi" label="结算日"
+              :id="'settleDays'+index"
+              :rules="[
+                  { required: true, message: '请选择结算日', trigger: 'blur' },
+                ]"
+                >
+          
+              <el-checkbox-group v-model="list.dayList"  @change="checkSettleDays">
+                <el-checkbox label="1">每月1号</el-checkbox>
+                <el-checkbox label="16">每月16号</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <h1 class="form_table_h2" style="margin-top:-13px;margin-bottom:12px">次周期结算上一个结算周期的收益，如果第一个周期不满一个结算周期也进行结算</h1>
+            <el-form-item class="joinPlace" label="首次结算开始日期" :id="'firstDealDate'+ index">
+                <el-date-picker
+                  :readonly="isHaveSettleOrders"
+                  v-model="list.firstDealDate"
+                  placeholder="选择日期">
+                </el-date-picker>           
+            </el-form-item>
+            <h1 class="form_table_h2" style="margin-top:-10px;margin-bottom:20px">生成结算单后，此日期不允许修改</h1>
+            <el-form-item label="后期分成比例" class="divisionPercent" :id="'divisionPercent'+ index" :rules="[
+                  { required: true, message: '请输入后期分成比例', trigger: 'blur' }
+                ]">
+              <el-input v-model.number="list.divisionPercent" placeholder='请输入后期分成比例'></el-input><span style="margin-left:5px;">%</span>
+            </el-form-item>
+            <h1 class="form_table_h2" style="margin-top:-12px;margin-bottom:20px">加盟商的累计收益超过投入的加盟资金时，从下个结算周期开始，加盟商的收益采用分成模式</h1>
+          </div>
         </div>
-      </div>
-      </div>
-        
-
-        <!-- 添加加盟商尾部 -->
-      <div>
-        <h1 class="form_table_h1">结算账号</h1>
-        <el-form-item label="支付宝账号" prop="alipayAccount">
-            <el-input v-model="ruleForm.alipayAccount" placeholder='请输入支付宝号码'></el-input>
-        </el-form-item>
-        <el-form-item label="结算银行" prop="settleBank">
-            <el-input v-model="ruleForm.settleBank" placeholder='请输入结算银行'></el-input>
-        </el-form-item>
-        <el-form-item label="开户行" prop="depositBank">
-            <el-input v-model="ruleForm.depositBank" placeholder='请输入银行户名'></el-input>
-        </el-form-item>
-        <el-form-item label="银行账号" prop="bankAccount">
-            <el-input v-model="ruleForm.bankAccount" placeholder='请输入银行账号'></el-input>
-        </el-form-item>
-        <el-form-item label="银行户名" prop="accountName">
-            <el-input v-model="ruleForm.accountName" placeholder='请输入银行户名'></el-input>
-        </el-form-item>
-        <h1 class="form_table_h1">联系人信息</h1> 
-        <el-form-item label="姓名"  prop="userName">
-          <el-input v-model="ruleForm.userName" placeholder='请输入姓名'></el-input>
-        </el-form-item>
-        <el-form-item label="证件类别">
-          <el-select v-model="ruleForm.cardType" placeholder="请选择证件类别">
-            <el-option label="身份证" value="身份证"></el-option>
-            <el-option label="护照" value="护照"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="证件号码">
-          <el-input v-model="ruleForm.idCard" placeholder='请输入证件号码'></el-input>
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
-        </el-form-item>
-        <el-checkbox v-model="ruleForm.isChecked" @change="handleCheckbox" id="form_checkBox">同时添加联系人的平台账号</el-checkbox>
-        <div v-if="ruleForm.isChecked">
-          <el-form-item label="用户名" prop="userId">
-            <el-input v-model="ruleForm.userId" placeholder='请输入用户名'></el-input>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input type="password" v-model="ruleForm.password" placeholder='6-20位，可包括字母、数字、下划线'></el-input>
-          </el-form-item>
         </div>
-        
+          
 
-        <!-- 提交表单部分 -->
-        <el-form-item>
-          <el-button class='addpartner_button' v-loading='loading8' type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button class='addpartner_button' @click="$router.push({path:'/index/partnerManager'})">取消</el-button>
-        </el-form-item>
+          <!-- 添加加盟商尾部 -->
+        <div>
+          <h1 class="form_table_h1">结算账号</h1>
+          <el-form-item label="支付宝账号" prop="alipayAccount">
+              <el-input v-model="ruleForm.alipayAccount" placeholder='请输入支付宝号码'></el-input>
+          </el-form-item>
+          <el-form-item label="结算银行" prop="settleBank">
+              <el-input v-model="ruleForm.settleBank" placeholder='请输入结算银行'></el-input>
+          </el-form-item>
+          <el-form-item label="开户行" prop="depositBank">
+              <el-input v-model="ruleForm.depositBank" placeholder='请输入银行户名'></el-input>
+          </el-form-item>
+          <el-form-item label="银行账号" prop="bankAccount">
+              <el-input v-model="ruleForm.bankAccount" placeholder='请输入银行账号'></el-input>
+          </el-form-item>
+          <el-form-item label="银行户名" prop="accountName">
+              <el-input v-model="ruleForm.accountName" placeholder='请输入银行户名'></el-input>
+          </el-form-item>
+          <h1 class="form_table_h1">联系人信息</h1> 
+          <el-form-item label="姓名"  prop="userName">
+            <el-input v-model="ruleForm.userName" placeholder='请输入姓名'></el-input>
+          </el-form-item>
+          <el-form-item label="证件类别">
+            <el-select v-model="ruleForm.cardType" placeholder="请选择证件类别">
+              <el-option label="身份证" value="身份证"></el-option>
+              <el-option label="护照" value="护照"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="证件号码">
+            <el-input v-model="ruleForm.idCard" placeholder='请输入证件号码'></el-input>
+          </el-form-item>
+          <el-form-item label="手机号" prop="phone">
+            <el-input v-model="ruleForm.phone" placeholder='请输入手机号'></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="ruleForm.email" placeholder='请输入邮箱'></el-input>
+          </el-form-item>
+          <el-checkbox v-model="ruleForm.isChecked" @change="handleCheckbox" id="form_checkBox">同时添加联系人的平台账号</el-checkbox>
+          <div v-if="ruleForm.isChecked">
+            <el-form-item label="用户名" prop="userId">
+              <el-input v-model="ruleForm.userId" placeholder='请输入用户名'></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input type="password" v-model="ruleForm.password" placeholder='6-20位，可包括字母、数字、下划线'></el-input>
+            </el-form-item>
+          </div>
+          
 
-      </div>
+          <!-- 提交表单部分 -->
+          <el-form-item>
+            <el-button class='addpartner_button' v-loading='loading8' type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button class='addpartner_button' @click="$router.push({path:'/index/partnerManager'})">取消</el-button>
+          </el-form-item>
 
-    </el-form>
+        </div>
 
-    <!-- 上传营业执照部分 -->
-    <el-upload
-      class="avatar-uploader"
-      :show-file-list="false"
-      :with-credentials='true'
-      action=''
-      :http-request = 'uploadWay'
-      :on-success="handleAvatarSuccess"
-      :before-upload="beforeAvatarUpload"
-      v-if="radio=='1'">
-      <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-      <h3>点击上传营业执照</h3>
-      <p style="font-size: 10px;color: #ccc; margin-left: 20px;">支持jpg、jpeg、png格式</p>
-    </el-upload>
-            
+      </el-form>
+
+      <!-- 上传营业执照部分 -->
+      <el-upload
+        class="avatar-uploader"
+        :show-file-list="false"
+        :with-credentials='true'
+        action=''
+        :http-request = 'uploadWay'
+        :on-success="handleAvatarSuccess"
+        :before-upload="beforeAvatarUpload"
+        v-if="radio=='1'">
+        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        <h3>点击上传营业执照</h3>
+        <p style="font-size: 10px;color: #ccc; margin-left: 20px;">支持jpg、jpeg、png格式</p>
+      </el-upload>
+    </div>      
       
 	</div>
 </div>
@@ -312,10 +313,10 @@
 @media screen and (min-width: 1367px) {
   #addpartner_form {
     /*  适配好的样式 */
-    height: 60%;
-    overflow-y: scroll;
+    height: 78%;
+    /* overflow-y: scroll; */
     overflow-x: hidden;
-    width: 57%;
+    width: 63%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     position: fixed;
     display: block;
@@ -323,7 +324,7 @@
     left: 50%;
     margin-left: -28%;
     margin-top: -25%;
-    padding: 70px 80px 80px 50px;
+    padding: 45px 0px 0px 50px;
     margin-right: 20px;
     border: 1px solid #ccc;
     background: #fff;
@@ -351,6 +352,13 @@
     background: #fff;
     border-radius: 6px;
   }
+}
+#addpartner_content{
+  height:100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding:20px 30px 30px 0;
+  box-sizing:border-box;
 }
 div.menuIcon{text-align: right;
    

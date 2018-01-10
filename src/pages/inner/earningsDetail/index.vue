@@ -171,7 +171,6 @@
           label="实际收益(元)"
           :render-header="rendHeader"
         >
-        <!-- :render-header="rendHeader" -->
           <template slot-scope="scope">
             {{(scope.row.balanceAmount).thousandFormat()}}
           </template>
@@ -644,7 +643,7 @@ export default {
             var newArr = JSON.parse(res.text).data
             this.totalItems = Number(JSON.parse(res.text).totalItems)
             this.sumMoney = JSON.parse(res.text).sumMoney
-
+            console.log('------------------------------总页码',this.totalItems)
             if (totalPage > 1) {
               this.pageShow = true
             } else {
@@ -762,7 +761,7 @@ export default {
               })
               .query({
                 'type': that.$route.query.type,
-                'cityId': $('.citys span.active').attr('myId'),
+                'cityId': this.cityId,
                 'startTime': startTime||'',
                 'endTime': endTime||''
               })
@@ -782,19 +781,20 @@ export default {
                   // var newList = that.tableDataDel(list)
                   if (list.length === 0) {
                     that.$message.error('当前查询没有信息，无法导出哦~');
-                   that.$loading({customClass: 'loading_class'}).close()
+                    that.$loading({customClass: 'loading_class'}).close()
                   } else {
+                    that.$loading({customClass: 'loading_class'}).close()
+                    console.log(res)
+                    window.location.href = (res.body.data)
                   //   const data = that.formatJson(filterVal, newList)
                   //   export_json_to_excel(tHeader, data, that.cityName + '_订单明细excel')
-                    that.$loading({customClass: 'loading_class'}).close()
+                    
                   //   that.$message({
                   //     type: 'success',
                   //     message: '导出成功'
                   //   })
                   // }
-                  console.log(res)
-                  // window.open(res.body.data)
-                  window.location.href = (res.body.data)
+                 
                   }
                 }
               })
