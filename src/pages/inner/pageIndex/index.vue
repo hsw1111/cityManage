@@ -46,7 +46,7 @@
             <el-option label="独家" value="1"></el-option>
             <el-option label="非独家" value="2"></el-option>
           </el-select>
-          <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+          <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" :title="title">
             <el-option label="全部加盟商" value="0"></el-option>
             <!-- <el-option label="加盟商1" value="1"></el-option>
             <el-option label="加盟商2" value="2"></el-option> -->
@@ -111,6 +111,7 @@
   .joinPartnerData {
     background:#ddd;
     margin-bottom:30px;
+    margin-right:20px;
   }
   .joinPartnerData .search_wrap{
     padding:10px;
@@ -340,6 +341,7 @@ export default {
       temp1:[],
       temp2:[],
       citys:[],
+      title:'',
 // --------------------------------
       status: [
         {
@@ -398,11 +400,13 @@ export default {
     document.title="蜜蜂出行加盟商管理平台"
     this.getCityList()
 
-    
   },
+
   methods: {
      // ----------------------------------下拉菜单三联动部分
-
+     fun(){
+       alert(1)
+     },
     searchPartner1(){
       request
         .post(host + 'beepartner/admin/cityPartner/findCityPartner')
@@ -466,7 +470,6 @@ export default {
     },
   // 加盟商改变
   partnerChange(val){
-    // console.log(val)
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
@@ -478,7 +481,10 @@ export default {
       this.citys = data[0].areaList
       this.cityId = this.citys[0].cityId
     }
-    // console.log(this.cityId)
+    var that  =this
+    setTimeout(function(){
+      that.title = $("p.select_connect .el-select input")[1].value
+    },200)
   },
     handleClick(e) {
       var elems = siblings(e.target)

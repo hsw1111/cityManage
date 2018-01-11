@@ -18,7 +18,7 @@
                 <el-option label="独家" value="1"></el-option>
                 <el-option label="非独家" value="2"></el-option>
               </el-select>
-              <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" @click='clickFun'>
+              <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" :title='title'>
                 <el-option label="全部加盟商" value="0"></el-option>
                 <!-- <el-option label="加盟商1" value="1"></el-option>
                 <el-option label="加盟商2" value="2"></el-option> -->
@@ -386,6 +386,7 @@ export default {
       temp1:[],
       temp2:[],
       citys:[],
+      title:'',
 // --------------------
       cityName:'全部地区',
       notice: false,
@@ -570,7 +571,11 @@ export default {
       this.citys = data[0].areaList
       this.cityId = this.citys[0].cityId
     }
-    console.log(this.cityId)
+    // console.log(this.cityId)
+    var that  =this
+    setTimeout(function(){
+      that.title = $("p.select_connect .el-select input")[1].value
+    },200)
   },
     getDate () {
       if (this.$route.query.type === '0') {
@@ -763,7 +768,8 @@ export default {
                 'type': that.$route.query.type,
                 'cityId': this.cityId,
                 'startTime': startTime||'',
-                'endTime': endTime||''
+                'endTime': endTime||'',
+                'cityPartnerId':this.joinPartner
               })
               // .send({
               //   'type': that.$route.query.type,
@@ -774,10 +780,11 @@ export default {
               .end((err, res) => {
                 if (err) {
                   console.log('err:' + err)
+                  that.$loading({customClass: 'loading_class'}).close()
                 } else {
                   this.checkLogin(res)
                   // 数据处理
-                  var list = JSON.parse(res.text).data
+                  var list = JSON.parse(res.text).data || []
                   // var newList = that.tableDataDel(list)
                   if (list.length === 0) {
                     that.$message.error('当前查询没有信息，无法导出哦~');

@@ -9,7 +9,7 @@
                   <el-option label="独家" value="1"></el-option>
                   <el-option label="非独家" value="2"></el-option>
                 </el-select>
-                <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange">
+                <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" :title='title'>
                   <el-option label="全部加盟商" value="0"></el-option>
                   <!-- <el-option label="加盟商1" value="1"></el-option>
                   <el-option label="加盟商2" value="2"></el-option> -->
@@ -171,6 +171,7 @@ export default {
       temp1:[],
       temp2:[],
       citys:[],
+      title:'',
 // --------------------------------
       companyName:"",
       tableData: [],
@@ -289,6 +290,10 @@ export default {
       this.cityId = this.citys[0].cityId
     }
     // console.log(this.cityId)
+    var that  =this
+    setTimeout(function(){
+      that.title = $("p.select_connect .el-select input")[1].value
+    },200)
   },
 
     handleCurrentChange(val) {
