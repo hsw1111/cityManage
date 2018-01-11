@@ -417,7 +417,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp1 = data
             
@@ -441,7 +441,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp2 = data
             
@@ -461,12 +461,12 @@ export default {
       }
       this.joinPartner = '0'
       this.cityId = '0'
-      console.log(this.partnerLists)
+      // console.log(this.partnerLists)
       
     },
   // 加盟商改变
   partnerChange(val){
-    console.log(val)
+    // console.log(val)
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
@@ -484,9 +484,6 @@ export default {
       that.title = $("p.select_connect .el-select input")[1].value
     },200)
   },
-    ha(scope){
-      console.log(scope)
-    },
     platChangeRole(val){
      this.options4.map((item)=>{
        if(item.value==val){
@@ -559,7 +556,7 @@ export default {
         // cityPartnerId:this.joinPartner
 
       }
-      console.log(obj)
+      // console.log(obj)
       // if (this.accountOrUsername.trim().length === 0 && this.telOrMail.trim().length === 0) {
       //   this.$message({
       //     type: 'error',
@@ -864,7 +861,7 @@ export default {
                 that.checkLogin(res)
                 var arr = JSON.parse(res.text).list
                 that.joinTableData = that.handleData(arr)
-                console.log("joinTableData",that.joinTableData)
+                // console.log("joinTableData",that.joinTableData)
                 that.totalItems = JSON.parse(res.text).totalItems
                 var totalPage = JSON.parse(res.text).totalPage
                 if (totalPage > 1) {
@@ -959,7 +956,7 @@ export default {
     },
     //编辑
     openEdit(scope) {
-      console.log(scope)
+      // console.log(scope)
       if(this.activeName==='平台'){
         if(scope.row.status===false){
           this.$message({
@@ -990,7 +987,7 @@ export default {
         })
 // ----加盟商
       }else{
-        console.log(scope.row)
+        // console.log(scope.row)
             if(scope.row.status===false){
             this.$message({
               type:'error',
@@ -1459,7 +1456,7 @@ export default {
               
               
               that.totalPage = Number(JSON.parse(res.text).totalPage)
-              console.log(JSON.parse(res.text))
+              // console.log(JSON.parse(res.text))
               var arr = JSON.parse(res.text).data
               that.totalItems = Number(JSON.parse(res.text).totalItems)
               if (that.totalPage > 1) {
@@ -1473,7 +1470,7 @@ export default {
               // console.log('that.$store.state.joinTableData', that.$store.state.joinTableData)
               that.joinTableData = that.$store.state.joinTableData
               that.initData = that.joinTableData
-              console.log(that.initData)
+              // console.log(that.initData)
               that.loading = false
             }
           })

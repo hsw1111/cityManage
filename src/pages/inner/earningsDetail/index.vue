@@ -475,7 +475,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp1 = data
             
@@ -499,7 +499,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp2 = data
             
@@ -519,7 +519,7 @@ export default {
       }
       this.joinPartner = '0'
       this.cityId = '0'
-      console.log(this.partnerLists)
+      // console.log(this.partnerLists)
       
     },
     // 从首页跳转到订单管理页面时根据joinMode处理加盟商下拉菜单
@@ -543,7 +543,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.partnerLists = data
              var partnerArr =  data.filter(item=>{
@@ -648,7 +648,7 @@ export default {
             var newArr = JSON.parse(res.text).data
             this.totalItems = Number(JSON.parse(res.text).totalItems)
             this.sumMoney = JSON.parse(res.text).sumMoney
-            console.log('------------------------------总页码',this.totalItems)
+
             if (totalPage > 1) {
               this.pageShow = true
             } else {
@@ -791,7 +791,7 @@ export default {
                     that.$loading({customClass: 'loading_class'}).close()
                   } else {
                     that.$loading({customClass: 'loading_class'}).close()
-                    console.log(res)
+                    // console.log(res)
                     window.location.href = (res.body.data)
                   //   const data = that.formatJson(filterVal, newList)
                   //   export_json_to_excel(tHeader, data, that.cityName + '_订单明细excel')

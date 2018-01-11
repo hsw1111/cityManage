@@ -431,7 +431,7 @@ export default {
           if (err) {
             console.log('err:' + err)
           } else {
-						console.log("请求用户信息",res)
+						// console.log("请求用户信息",res)
             this.checkLogin(res)
 						this.name = JSON.parse(res.text).data.name
 						this.userName = JSON.parse(res.text).data.userName

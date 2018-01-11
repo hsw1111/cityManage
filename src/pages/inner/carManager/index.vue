@@ -292,7 +292,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp1 = data
               this.loading2 = false
@@ -316,7 +316,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp2 = data
                this.loading2 = false
@@ -345,7 +345,7 @@ export default {
             console.log('error:', error)
           } else {
             this.checkLogin(res)
-            console.log(JSON.parse(res.text))
+            // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.partnerLists = data
              var partnerArr =  data.filter(item=>{
@@ -377,7 +377,7 @@ export default {
     },
   // 加盟商改变
   partnerChange(val){
-    console.log(val)
+    // console.log(val)
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
@@ -577,7 +577,7 @@ export default {
     },
     // 通过车辆状态查询
     searchThroughCheckList () {
-      console.log(this.form)
+      // console.log(this.form)
       this.currentPage = 1
       
       var type 
@@ -913,7 +913,7 @@ export default {
     'checkList': 'searchThroughCheckList',
     "form.data1": {
       handler: function (val, oldVal) {
-        console.log(val)
+        // console.log(val)
         if(val===undefined){
            if (this.activeName === '未分配') {
             this.form.data1 = ''
@@ -952,7 +952,7 @@ export default {
     },
     "form.data2": {
       handler: function (val, oldVal) {
-        console.log('val', val)
+        // console.log('val', val)
 
         if(val===undefined){
             this.form.data2 = ''
