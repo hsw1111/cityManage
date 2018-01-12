@@ -200,7 +200,7 @@ export default {
           this.cityId = this.citys[0].cityId
         }
       
-      
+      this.$emit('fun',this.joinMode,this.joinPartner,this.cityId)
       // console.log(this.cityId)
       var that  =this
       setTimeout(function(){

@@ -38,7 +38,6 @@
                           </el-select>
                         </p>
                       <!-- <div class="citys" style=" margin-left: 69px;color:#555">
-
                         <address class="joinArea">加盟区域</address>
                         <span @click="handleClick" myId='0' class="active">全部地区</span>
                         <span @click="handleClick" :key='item.id' :myId='item.code' v-for="item in cityList">{{item.name}}</span>
@@ -124,9 +123,6 @@
               </el-pagination>
             </div>
           
-            <!-- <div id="carManager_page">
-              <div class="M-box"></div>
-            </div> -->
       </el-tab-pane>
       <el-tab-pane label="未分配" name='未分配'>
         <div class="carManager_content">
@@ -219,8 +215,6 @@
 import request from 'superagent'
 import moment from 'moment'
 import {siblings} from '../../../../utils/index.js'
-// import $ from 'jquery'
-// import Vue from 'vue'
 import { host } from '../../../config/index.js'
 export default {
   data: function () {
@@ -234,6 +228,7 @@ export default {
       temp2:[],
       citys:[],
       title:'',
+
       form: {
         radio: '',
         data1: '',
@@ -255,6 +250,7 @@ export default {
       isSearch: false
     }
   },
+
   created(){
     this.hrefChange()
     this.searchPartner()
@@ -270,7 +266,11 @@ export default {
     this.getDateByTabName('0')
   },
   methods: {
-  
+  dealFun(joinMode,joinPartner,cityId){
+    this.joinMode = joinMode
+    this.joinPartner = joinPartner
+    this.cityId = cityId
+  },
 // ----------------------------------下拉菜单三联动部分开始-----------------------------------------------
      searchPartner(){
       request
