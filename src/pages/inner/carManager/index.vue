@@ -18,8 +18,6 @@
                           </el-select>
                           <el-select v-model="joinPartner" placeholder="请选择加盟商" @change="partnerChange" :title='title'>
                             <el-option label="全部加盟商" value="0"></el-option>
-                            <!-- <el-option label="加盟商1" value="1"></el-option>
-                            <el-option label="加盟商2" value="2"></el-option> -->
                             <el-option 
                               v-for='(item,index) in partnerLists'
                               :key="item.id"
@@ -345,7 +343,7 @@ export default {
           }
         })
     },
-     // 从首页跳转到订单管理页面时根据joinMode处理加盟商下拉菜单
+    // 从首页跳转到订单管理页面时根据joinMode处理加盟商下拉菜单
     hrefChange(){
         request
         .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
@@ -397,37 +395,38 @@ export default {
       // console.log(this.partnerLists)
       
     },
-   // 加盟商改变
-  partnerChange(val){
-    
-    var data = this.partnerLists.filter(item=>{
-      return item.cityPartnerId == val
-    })
-    if(val=='0'){
-          this.citys = []
-          this.cityId = '0'
-      }else if(this.joinMode=='0'){
-          this.citys = data[0].areaList
+    // 加盟商改变
+    partnerChange(val){
+      
+      var data = this.partnerLists.filter(item=>{
+        return item.cityPartnerId == val
+      })
+      if(val=='0'){
+            this.citys = []
+            this.cityId = '0'
+        }else if(this.joinMode=='0'){
+            this.citys = data[0].areaList
+            this.cityId = this.citys[0].cityId
+        }else if(this.joinMode=='1'){
+          this.citys = data[0].areaList.filter(item=>{
+            return item.joinMode=='1'
+          })
           this.cityId = this.citys[0].cityId
-      }else if(this.joinMode=='1'){
-        this.citys = data[0].areaList.filter(item=>{
-          return item.joinMode=='1'
-        })
-        this.cityId = this.citys[0].cityId
-      }else if(this.joinMode=='2'){
-        this.citys = data[0].areaList.filter(item=>{
-          return item.joinMode=='2'
-        })
-        this.cityId = this.citys[0].cityId
-      }
-    
-    
-    // console.log(this.cityId)
-    var that  =this
-    setTimeout(function(){
-      that.title = $("p.select_connect .el-select input")[1].value
-    },200)
-  },
+        }else if(this.joinMode=='2'){
+          this.citys = data[0].areaList.filter(item=>{
+            return item.joinMode=='2'
+          })
+          this.cityId = this.citys[0].cityId
+        }
+      
+      
+      // console.log(this.cityId)
+      var that  =this
+      setTimeout(function(){
+        that.title = $("p.select_connect .el-select input")[1].value
+      },200)
+    },
+// ----------------------------------下拉菜单三联动部分结束-----------------------------------------------
 
 
     handleSizeChange(val) {
