@@ -623,13 +623,7 @@ export default {
     // cityCodeList: function() {
     //   this.loadIndexData();
     // }
-    'cityCode':{
-      handler:function(){
-        if(this.joinPartner!='0'){
-          this.loadIndexData()
-        }
-      }
-    }
+    'cityCode':'loadIndexData'
   }
 };
 </script>

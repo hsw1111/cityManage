@@ -544,7 +544,6 @@ export default {
         })
         .end((error, res) => {
           if (error) {
-          
             console.log('error:', error)
           } else {
             this.checkLogin(res)
@@ -590,23 +589,23 @@ export default {
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
-    if(this.joinMode=='0'){
-      this.citys = data[0].areaList
-      this.cityId = '0'
-      if(val!='0'){
+    if(val=='0'){
+          this.citys = []
+          this.cityId = '0'
+      }else if(this.joinMode=='0'){
+          this.citys = data[0].areaList
+          this.cityId = this.citys[0].cityId
+      }else if(this.joinMode=='1'){
+        this.citys = data[0].areaList.filter(item=>{
+          return item.joinMode=='1'
+        })
+        this.cityId = this.citys[0].cityId
+      }else if(this.joinMode=='2'){
+        this.citys = data[0].areaList.filter(item=>{
+          return item.joinMode=='2'
+        })
         this.cityId = this.citys[0].cityId
       }
-    }else if(this.joinMode=='1'&&val!='0'){
-      this.citys = data[0].areaList.filter(item=>{
-        return item.joinMode=='1'
-      })
-      this.cityId = this.citys[0].cityId
-    }else if(this.joinMode=='2'&&val!='0'){
-      this.citys = data[0].areaList.filter(item=>{
-        return item.joinMode=='2'
-      })
-      this.cityId = this.citys[0].cityId
-    }
     
     
     // console.log(this.cityId)
@@ -1015,13 +1014,7 @@ export default {
   watch:{
     // 'joinMode':'getDate',
     // 'cityId':'getDate',
-    'cityId':{
-      handler:function(){
-        if(this.joinPartner!='0'){
-          this.getDate()
-        }
-      }
-    }
+    'cityId':'getDate'
   }
 }
 </script>

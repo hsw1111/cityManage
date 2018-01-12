@@ -2,10 +2,10 @@
   <div class="consumeData">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleClickTab">
       <el-tab-pane name="partner">
-        <span slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=partner')">按加盟商</span>
+        <div style="padding:0 16px" slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=partner')">按加盟商</div>
       </el-tab-pane>
       <el-tab-pane name="city">
-        <span slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=partner')">按地区</span>
+        <div style="padding:0 16px" slot="label" @click="$router.push('/index/incomingRank?type=daily&activeName=city')">按地区</div>
       </el-tab-pane>
        <div class="countInfo">
           <!-- <div class="cityContainer" v-show="remoteCityList.length>1" >
@@ -129,7 +129,6 @@ export default {
       this.show = false
       this.value4 = []
       this.$store.state.users.timeline = {}
-      this.$router.push({ query: { type: 'daily',activeName:this.activeName } })
     },
     handleChangeType(e) {
       var that = this

@@ -317,7 +317,7 @@ export default {
       }
     }
     return {
-       //查询条件
+      //查询条件
       joinMode:'0',
       joinPartner:'0',
       cityId:'0',
@@ -395,13 +395,9 @@ export default {
       isSearch: false
     }
   },
-  created(){
-    this.searchPartner()
-    this.searchPartner1()
-    this.searchPartner2()
-  },
+
   methods: {
-     // ----------------------------------下拉菜单三联动部分
+// ----------------------------------下拉菜单三联动部分开始-----------------------------------------------
     searchPartner(){
       request
         .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
@@ -488,38 +484,37 @@ export default {
       
     },
    // 加盟商改变
-  partnerChange(val){
-    
-    var data = this.partnerLists.filter(item=>{
-      return item.cityPartnerId == val
-    })
-    if(this.joinMode=='0'){
-      this.citys = data[0].areaList
-      this.cityId = '0'
-      if(val!='0'){
+    partnerChange(val){
+      
+      var data = this.partnerLists.filter(item=>{
+        return item.cityPartnerId == val
+      })
+      if(val=='0'){
+          this.citys = []
+          this.cityId = '0'
+      }else if(this.joinMode=='0'){
+          this.citys = data[0].areaList
+          this.cityId = this.citys[0].cityId
+      }else if(this.joinMode=='1'){
+        this.citys = data[0].areaList.filter(item=>{
+          return item.joinMode=='1'
+        })
+        this.cityId = this.citys[0].cityId
+      }else if(this.joinMode=='2'){
+        this.citys = data[0].areaList.filter(item=>{
+          return item.joinMode=='2'
+        })
         this.cityId = this.citys[0].cityId
       }
-    }else if(this.joinMode=='1'&&val!='0'){
-      this.citys = data[0].areaList.filter(item=>{
-        return item.joinMode=='1'
-      })
-      this.cityId = this.citys[0].cityId
-    }else if(this.joinMode=='2'&&val!='0'){
-      this.citys = data[0].areaList.filter(item=>{
-        return item.joinMode=='2'
-      })
-      this.cityId = this.citys[0].cityId
-    }
-    
-    
-    // console.log(this.cityId)
-    var that  =this
-    setTimeout(function(){
-      that.title = $("p.select_connect .el-select input")[1].value
-    },200)
-  },
-
-
+      
+      
+      // console.log(this.cityId)
+      var that  =this
+      setTimeout(function(){
+        that.title = $("p.select_connect .el-select input")[1].value
+      },200)
+    },
+// ----------------------------------下拉菜单三联动部分结束----------------------------------------------
     platChangeRole(val){
      this.options4.map((item)=>{
        if(item.value==val){
@@ -1457,6 +1452,9 @@ export default {
         })
       } else {
         // 获取加盟商的列表
+          this.searchPartner()
+          this.searchPartner1()
+          this.searchPartner2()
         this.loading = true
         this.getAllianceList()
         
@@ -1550,6 +1548,7 @@ export default {
     $('.sign[name="80"]').addClass('is-active')
     document.title = '账号管理'
     var that = this;
+
      request.post(host + 'beepartner/admin/User/findAdminRole')
           .withCredentials()
           .set({
@@ -1571,13 +1570,7 @@ export default {
   },
   watch: {
     // 'joinMode':'handleClick',
-    'cityId':{
-      handler:function(){
-        if(this.joinPartner!='0'){
-          this.handleClick()
-        }
-      }
-    },
+    'cityId':'handleClick',
     'recodeRoleName':{
       handler:function(val,oldVal){
         this.options.map((item)=>{
