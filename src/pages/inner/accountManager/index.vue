@@ -109,8 +109,8 @@
                     :index='index'
                   ></el-option>
                 </el-select>
-                <el-select v-model="cityId" placeholder="请选择加盟商地区">
-                  <el-option label="全部地区" value="0" v-if='joinPartner=="0"'></el-option>
+                <el-select v-model="cityId" placeholder="请选择加盟区域">
+                  <el-option label="请选择加盟区域" value="0" v-if='joinPartner=="0"'></el-option>
                   <el-option 
                     v-else
                     v-for='(item,index) in citys'
@@ -254,10 +254,6 @@ import { delAdminUser } from '../../../api/delAdminUser.api'
 import { delAccountByAdmin } from '../../../api/delAccountByAdmin.api'
 import { host } from '../../../config/index.js'
 export default {
-  created(){
-    this.searchPartner1()
-    this.searchPartner2()
-  },
   data() {
     var that = this
     var validatorUserName = function(rule, value, callback) {
@@ -326,6 +322,7 @@ export default {
       joinPartner:'0',
       cityId:'0',
       partnerLists:[],
+      temp:[],
       temp1:[],
       temp2:[],
       citys:[],
@@ -398,9 +395,35 @@ export default {
       isSearch: false
     }
   },
+  created(){
+    this.searchPartner()
+    this.searchPartner1()
+    this.searchPartner2()
+  },
   methods: {
      // ----------------------------------下拉菜单三联动部分
-
+    searchPartner(){
+      request
+        .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
+        .withCredentials()
+        .set({
+          'content-type': 'application/x-www-form-urlencoded'
+        })
+        .send({
+          joinMode:0
+        })
+        .end((error, res) => {
+          if (error) {
+          
+            console.log('error:', error)
+          } else {
+            // console.log(JSON.parse(res.text))
+            var data = JSON.parse(res.text).data
+              this.temp = data
+              this.partnerLists = this.temp
+          }
+        })
+    },
     searchPartner1(){
       request
         .post(host + 'beepartner/admin/cityPartner/findCityPartner')
@@ -449,41 +472,54 @@ export default {
           }
         })
     },
-    // 加盟模式改变
+      // 加盟模式改变
     modeChange(val){
       if(val=='0'){
-        this.partnerLists = []
-        this.citys = []
+        this.partnerLists = this.temp
       }else if(val=='1'){
          this.partnerLists = this.temp1
       }else{
         this.partnerLists = this.temp2
       }
+      this.citys = []
       this.joinPartner = '0'
       this.cityId = '0'
       // console.log(this.partnerLists)
       
     },
-  // 加盟商改变
+   // 加盟商改变
   partnerChange(val){
-    // console.log(val)
+    
     var data = this.partnerLists.filter(item=>{
       return item.cityPartnerId == val
     })
-   
-    if(val=='0'){
-      this.citys = []
-      this.cityId = '0'
-    }else{
+    if(this.joinMode=='0'){
       this.citys = data[0].areaList
+      this.cityId = '0'
+      if(val!='0'){
+        this.cityId = this.citys[0].cityId
+      }
+    }else if(this.joinMode=='1'&&val!='0'){
+      this.citys = data[0].areaList.filter(item=>{
+        return item.joinMode=='1'
+      })
+      this.cityId = this.citys[0].cityId
+    }else if(this.joinMode=='2'&&val!='0'){
+      this.citys = data[0].areaList.filter(item=>{
+        return item.joinMode=='2'
+      })
       this.cityId = this.citys[0].cityId
     }
+    
+    
     // console.log(this.cityId)
     var that  =this
     setTimeout(function(){
       that.title = $("p.select_connect .el-select input")[1].value
     },200)
   },
+
+
     platChangeRole(val){
      this.options4.map((item)=>{
        if(item.value==val){
@@ -1535,7 +1571,13 @@ export default {
   },
   watch: {
     // 'joinMode':'handleClick',
-    'cityId':'handleClick',
+    'cityId':{
+      handler:function(){
+        if(this.joinPartner!='0'){
+          this.handleClick()
+        }
+      }
+    },
     'recodeRoleName':{
       handler:function(val,oldVal){
         this.options.map((item)=>{

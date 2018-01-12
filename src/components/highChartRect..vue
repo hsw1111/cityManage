@@ -5,7 +5,7 @@
       <img src="../assets/img/2.png" />
       <p>暂无数据</p>
     </div>
-    <div id="container" style="position: relative;"></div>
+    <div id="container" style="position: relative;height:400px;"></div>
   </div>
 </template>
 <script>
