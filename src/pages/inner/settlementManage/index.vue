@@ -240,7 +240,7 @@ export default {
     },
     searchPartner1(){
       request
-        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
         .withCredentials()
         .set({
           'content-type': 'application/x-www-form-urlencoded'
@@ -264,7 +264,7 @@ export default {
     },
     searchPartner2(){
       request
-        .post(host + 'beepartner/admin/cityPartner/findCityPartner')
+        .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
         .withCredentials()
         .set({
           'content-type': 'application/x-www-form-urlencoded'
@@ -639,7 +639,15 @@ export default {
   },
   watch:{
     // 'joinMode':'handleClick',
-    'cityId':'handleClick'
+    'joinPartner':{
+      handler:function(){
+        var that = this
+        setTimeout(function(){
+          that.handleClick()
+        },0)
+      }
+    },    
+    'cityId':'handleClick',
   }
 }
 </script>

@@ -478,7 +478,9 @@ export default {
             // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp = data
-              this.partnerLists = this.temp
+             if(!this.$route.query.cityPartnerId){
+                this.partnerLists = this.temp
+             }
           }
         })
     },
@@ -1015,7 +1017,15 @@ export default {
   watch:{
     // 'joinMode':'getDate',
     // 'cityId':'getDate',
-    'cityId':'getDate'
+    'joinPartner':{
+      handler:function(){
+        var that = this
+        setTimeout(function(){
+          that.getDate()
+        },0)
+      }
+    },    
+    'cityId':'getDate',
   }
 }
 </script>

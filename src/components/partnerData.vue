@@ -614,16 +614,22 @@ export default {
     
   },
   mounted: function() {
-    $(".sign").removeClass("is-active");
-    $('.sign[name="1100"]').addClass("is-active");
     this.loadIndexData()
-    document.title = "蜜蜂出行加盟商管理平台";
   },
   watch: {
     // cityCodeList: function() {
     //   this.loadIndexData();
     // }
-    'cityCode':'loadIndexData'
+    'joinPartner':{
+      handler:function(){
+        var that = this
+        setTimeout(function(){
+          that.loadIndexData()
+        },0)
+      }
+    },
+    
+    'cityCode':'loadIndexData',
   }
 };
 </script>

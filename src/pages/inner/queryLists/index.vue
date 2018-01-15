@@ -31,7 +31,7 @@
           :render-header="rendHeader1">
 <!--          判断是显示加盟商还是加盟区域                 -->
           <template slot-scope="scope">
-            {{$route.query.activeName=='partner'?(scope.row.companyName||scope.row.conName):scope.row.allianceArea}}
+            {{$route.query.activeName=='partner'?(scope.row.joinTarget=='1'?scope.row.companyName:scope.row.conName):scope.row.allianceArea}}
           </template>
         </el-table-column>
         <el-table-column
@@ -297,6 +297,7 @@ export default {
               }
               this.$store.dispatch('consumeData_action', {newArr})
               this.lists = this.$store.state.users.consumeData
+              console.log(this.lists)
               }
               
             }
@@ -348,6 +349,7 @@ export default {
               }
               this.$store.dispatch('consumeData_action', {newArr})
               this.lists = this.$store.state.users.consumeData
+              
               }
               
             }
@@ -414,6 +416,7 @@ export default {
                 }
                 this.$store.dispatch('consumeData_action', {newArr})
                 this.lists = this.$store.state.users.consumeData
+                console.log(this.lists)
               }
             })
         }else{
@@ -520,6 +523,7 @@ export default {
               }
               this.$store.dispatch('consumeData_action', {newArr})
               this.lists = this.$store.state.users.consumeData
+              console.log(this.lists)
             }
           })
 // -----------------------------按地区       
@@ -630,6 +634,7 @@ export default {
                 }
                 this.$store.dispatch('consumeData_action', {newArr})
                 this.lists = this.$store.state.users.consumeData
+                console.log(this.lists)
                 }
 
             })

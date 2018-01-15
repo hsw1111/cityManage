@@ -233,7 +233,11 @@ export default {
     getChartDate() {
       var res = this.$store.state.users.consumeData.map((item) => {
         if(this.$route.query.activeName=='partner'){
-          return item.companyName||item.conName
+          if(item.joinTarget=='1'){
+             return item.companyName
+          }else{
+            return item.conName
+          }
         }else{
           return item.allianceArea
         }
@@ -254,7 +258,11 @@ export default {
     getChartByRoute(arr) {
       var res = arr.map((item) => {
           if(this.$route.query.activeName=='partner'){
-            return item.companyName||item.conName
+            if(item.joinTarget=='1'){
+              return item.companyName
+            }else{
+              return item.conName
+            }
           }else{
             return item.allianceArea
           }

@@ -444,7 +444,7 @@ export default {
     },
     mouseEnterHandler() {
       $('div.el-popover').css({
-         right:101,
+         right:170,
          top:200,
          "display":"block",
        })

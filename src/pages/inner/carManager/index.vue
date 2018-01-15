@@ -266,11 +266,6 @@ export default {
     this.getDateByTabName('0')
   },
   methods: {
-  dealFun(joinMode,joinPartner,cityId){
-    this.joinMode = joinMode
-    this.joinPartner = joinPartner
-    this.cityId = cityId
-  },
 // ----------------------------------下拉菜单三联动部分开始-----------------------------------------------
      searchPartner(){
       request
@@ -290,12 +285,14 @@ export default {
             // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp = data
-              this.partnerLists = this.temp
+              if(!this.$route.query.cityPartnerId){
+                this.partnerLists = this.temp
+              }
+              
           }
         })
     },
     searchPartner1(){
-      this.loading2 = true
       request
         .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
         .withCredentials()
@@ -314,12 +311,12 @@ export default {
             // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp1 = data
-              this.loading2 = false
+            
+
           }
         })
     },
     searchPartner2(){
-       this.loading2 = true
       request
         .post(host + 'beepartner/admin/cityPartner/queryContionByMode')
         .withCredentials()
@@ -338,7 +335,7 @@ export default {
             // console.log(JSON.parse(res.text))
             var data = JSON.parse(res.text).data
               this.temp2 = data
-               this.loading2 = false
+            
 
           }
         })
@@ -416,6 +413,7 @@ export default {
           this.citys = data[0].areaList.filter(item=>{
             return item.joinMode=='2'
           })
+          console.log(this.citys)
           this.cityId = this.citys[0].cityId
         }
       
@@ -785,9 +783,8 @@ export default {
       this.joinMode = '0'
       this.joinPartner = '0'
       this.cityId = '0'
-      this.partnerLists = []
       this.citys = []
-
+      
 
       if (this.activeName === '未分配') {
         this.getDateByTabName('1')
@@ -940,8 +937,16 @@ export default {
   },
   watch: {
     // 'joinMode':'searchByTimeline',
+    'joinPartner':{
+      handler:function(){
+        var that = this
+        setTimeout(function(){
+          that.searchByTimeline()
+        },0)
+      }
+    },
+    
     'cityId':'searchByTimeline',
-    // 'joinPartner':'searchByTimeline',
     'checkList': 'searchThroughCheckList',
     "form.data1": {
       handler: function (val, oldVal) {
